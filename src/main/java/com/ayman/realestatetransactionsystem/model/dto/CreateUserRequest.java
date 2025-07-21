@@ -1,6 +1,5 @@
 package com.ayman.realestatetransactionsystem.model.dto;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 

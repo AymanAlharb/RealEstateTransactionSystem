@@ -2,7 +2,6 @@ package com.ayman.realestatetransactionsystem.model;
 
 import com.ayman.realestatetransactionsystem.model.enums.UserRoleEnum;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.util.Set;

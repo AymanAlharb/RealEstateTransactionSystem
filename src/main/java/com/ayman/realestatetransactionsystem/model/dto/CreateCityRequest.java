@@ -1,8 +1,6 @@
 package com.ayman.realestatetransactionsystem.model.dto;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data

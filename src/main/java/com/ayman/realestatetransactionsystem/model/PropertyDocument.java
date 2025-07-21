@@ -1,6 +1,5 @@
 package com.ayman.realestatetransactionsystem.model;
 
-import com.ayman.realestatetransactionsystem.model.enums.PropertyStatusEnum;
 import com.ayman.realestatetransactionsystem.model.enums.TransectionStatusEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,6 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
