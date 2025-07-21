@@ -19,7 +19,7 @@ public class CreatePropertyRequest {
     private double price;
 
     @NotEmpty(message = "The status can not be empty")
-    @Pattern(regexp = "(?i)AVAILABLE|LOCKED|SOLD|HIDDEN")
+    @Pattern(regexp = "^(?i)(AVAILABLE|LOCKED|SOLD|HIDDEN)$")
     private String status;
 
     @NotEmpty(message = "The location can not be empty")

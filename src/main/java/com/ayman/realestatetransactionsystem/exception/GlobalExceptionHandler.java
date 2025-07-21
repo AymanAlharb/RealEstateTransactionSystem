@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = InvalidDataAccessResourceUsageException.class )
     public ResponseEntity<ApiResponse> InvalidDataAccessResourceUsageException(InvalidDataAccessResourceUsageException e){
         String msg=e.getMessage();
-        return ResponseEntity.status(200).body(new ApiResponse(msg));
+        return ResponseEntity.status(400).body(new ApiResponse(msg));
     }
 
 
