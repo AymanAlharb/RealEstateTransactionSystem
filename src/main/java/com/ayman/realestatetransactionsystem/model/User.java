@@ -30,6 +30,7 @@ public class User {
     @Column(columnDefinition = "varchar(16) not null unique")
     private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(8) not null")
     private UserRoleEnum role;
 
