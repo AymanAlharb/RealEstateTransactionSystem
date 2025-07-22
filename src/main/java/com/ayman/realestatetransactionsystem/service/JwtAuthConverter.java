@@ -1,4 +1,4 @@
-package com.ayman.realestatetransactionsystem;
+package com.ayman.realestatetransactionsystem.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
@@ -26,7 +26,7 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
 
     @Value("${jwt.auth.converter.principle-attribute}")
     private String principleAttribute;
-    @Value("${jwt.auth.converter.resource-id}")
+    @Value("${resource-id}")
     private String resourceId;
 
     @Override

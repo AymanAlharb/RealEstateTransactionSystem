@@ -2,6 +2,7 @@ package com.ayman.realestatetransactionsystem.controller;
 
 import com.ayman.realestatetransactionsystem.exception.ApiResponse;
 import com.ayman.realestatetransactionsystem.model.User;
+import com.ayman.realestatetransactionsystem.model.dto.CreateLoginRequest;
 import com.ayman.realestatetransactionsystem.model.dto.CreateUserRequest;
 import com.ayman.realestatetransactionsystem.service.UserService;
 import jakarta.validation.Valid;
@@ -24,9 +25,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Registered successfully"));
     }
 
-    @GetMapping("/hi")
-    @PreAuthorize("hasRole('BROKER')")
-    public ResponseEntity<ApiResponse> hi(){
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Hi"));
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse> login(@RequestBody CreateLoginRequest loginRequest){
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Token: " + userService.login(loginRequest)));
     }
 }

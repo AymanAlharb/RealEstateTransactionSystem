@@ -22,6 +22,7 @@ public class CreateUserRequest {
     @NotEmpty(message = "The email can not be empty.")
     private String email;
 
+    // TODO : add regex
     @NotEmpty(message = "The phone number can not be empty.")
     private String phoneNumber;
 

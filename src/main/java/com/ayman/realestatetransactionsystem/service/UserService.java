@@ -4,6 +4,7 @@ import com.ayman.realestatetransactionsystem.exception.ApiException;
 import com.ayman.realestatetransactionsystem.model.User;
 import com.ayman.realestatetransactionsystem.model.dto.CreateAssignRoleRequest;
 import com.ayman.realestatetransactionsystem.model.dto.CreateKeycloakUserRequest;
+import com.ayman.realestatetransactionsystem.model.dto.CreateLoginRequest;
 import com.ayman.realestatetransactionsystem.model.dto.CreateUserRequest;
 import com.ayman.realestatetransactionsystem.model.enums.UserRoleEnum;
 import com.ayman.realestatetransactionsystem.repository.UserRepository;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -30,16 +32,25 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @Service
 public class UserService {
-    String addUserUrl = "/admin/realms/RealEstateSystem/users";
-    String getUserKeycloakUrl = "/admin/realms/RealEstateSystem/users?username=";
-    String getClientIdUrl = "/admin/realms/RealEstateSystem/clients";
-    String getAdminTokenUrl = "/realms/RealEstateSystem/protocol/openid-connect/token";
-    String clientPlainId = "real-estate-rest-api";
-    String getRoleIdUrl = "/admin/realms/RealEstateSystem/clients/";
-    String assignRoleUrl = "/admin/realms/RealEstateSystem/users/";
-    String grant_type = "client_credentials";
-    String client_id = "admin-cli";
-    String client_secret = "vUTyh5k7l9KZLile9SlHqMzQlru0lNLY";
+
+    @Value("${add-user-url}")
+    String addUserUrl;
+    @Value("${get-user-keycloak-url}")
+    String getUserKeycloakUrl;
+    @Value("${get-client-id-url}")
+    String getClientIdUrl;
+    @Value("${get-user-token-url}")
+    String getUserTokenUrl;
+    @Value("${resource-id}")
+    String resourceId;
+    @Value("${get-role-id-url}")
+    String getRoleIdUrl;
+    @Value("${assign-role-keycloak-url}")
+    String assignRoleUrl;
+    @Value("${admin-client-id}")
+    String client_id;
+    @Value("${client-secret}")
+    String client_secret;
     String adminToken = "";
     private final UserRepository userRepository;
     private final WebClient webClient = WebClient.builder().baseUrl("http://localhost:8080").build();
@@ -64,6 +75,16 @@ public class UserService {
         // Save to the database.
         userRepository.save(user);
         log.info("New {} with the username {} signup", user.getRole(), user.getUsername());
+    }
+
+    public String login(CreateLoginRequest loginRequest) {
+        // Build URL Encode
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("client_id", resourceId);
+        formData.add("grant_type", "password");
+        formData.add("password", loginRequest.getPassword());
+        formData.add("username", loginRequest.getUsername());
+        return getUserToken(formData);
     }
 
     private UserRoleEnum assignRoleEnum(String role) {
@@ -100,7 +121,11 @@ public class UserService {
         // Get Admin token
         if (Objects.equals(adminToken, "")) {
             log.info("admin token null");
-            adminToken = getAdminToken();
+            MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+            formData.add("client_id", client_id);
+            formData.add("client_secret", client_secret);
+            formData.add("grant_type", "client_credentials");
+            adminToken = getUserToken(formData);
             log.info(adminToken);
         }
         // Add user to realm
@@ -116,14 +141,10 @@ public class UserService {
 
     }
 
-    private String getAdminToken() {
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("client_id", client_id);
-        formData.add("client_secret", client_secret);
-        formData.add("grant_type", grant_type);
+    private String getUserToken(MultiValueMap<String, String> formData) {
 
         String response = webClient.post()
-                .uri(getAdminTokenUrl)
+                .uri(getUserTokenUrl)
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .body(BodyInserters.fromFormData(formData))
                 .retrieve()
@@ -199,12 +220,12 @@ public class UserService {
         }
 
         Optional<JsonNode> clientNode = StreamSupport.stream(root.spliterator(), false)
-                .filter(client -> clientPlainId.equals(client.get("clientId").asText()))
+                .filter(client -> resourceId.equals(client.get("clientId").asText()))
                 .findFirst();
 
         return clientNode
                 .map(client -> client.get("id").asText())
-                .orElseThrow(() -> new RuntimeException("client with client id: '" + clientPlainId + "' not found."));
+                .orElseThrow(() -> new RuntimeException("client with client id: '" + resourceId + "' not found."));
     }
 
     private String getRoleId(String clientId, String role) {

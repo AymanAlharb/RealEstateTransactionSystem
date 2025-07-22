@@ -1,6 +1,6 @@
 package com.ayman.realestatetransactionsystem.config;
 
-import com.ayman.realestatetransactionsystem.JwtAuthConverter;
+import com.ayman.realestatetransactionsystem.service.JwtAuthConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/user/register")
+                .requestMatchers("/api/v1/user/register", "/api/v1/user/login")
                 .permitAll()
                 .anyRequest()
                 .authenticated();
