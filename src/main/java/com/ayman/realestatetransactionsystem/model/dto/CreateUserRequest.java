@@ -10,10 +10,11 @@ public class CreateUserRequest {
             message = "The username can not be shorter than 4 characters and not longer than 20 characters")
     private String username;
 
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-            message = "Password must be at least 8 characters and include uppercase, lowercase, digit, and special character."
-    )
+    // TODO : Uncomment
+//    @Pattern(
+//            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+//            message = "Password must be at least 8 characters and include uppercase, lowercase, digit, and special character."
+//    )
     @NotEmpty(message = "The password can not be empty.")
     private String password;
 
