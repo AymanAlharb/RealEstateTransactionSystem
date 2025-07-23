@@ -1,7 +1,6 @@
 package com.ayman.realestatetransactionsystem.controller;
 
 import com.ayman.realestatetransactionsystem.exception.ApiResponse;
-import com.ayman.realestatetransactionsystem.model.User;
 import com.ayman.realestatetransactionsystem.model.dto.CreateLoginRequest;
 import com.ayman.realestatetransactionsystem.model.dto.CreateUserRequest;
 import com.ayman.realestatetransactionsystem.service.UserService;
@@ -9,8 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor

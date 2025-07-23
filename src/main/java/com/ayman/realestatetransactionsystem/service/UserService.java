@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -57,13 +58,13 @@ public class UserService {
 
     public void registerUser(CreateUserRequest userRequest) {
 
-        validateUsernameAndEmail(userRequest);
+        checkDataUniqueness(userRequest);
         UserRoleEnum userRoleEnum = assignRoleEnum(userRequest.getRole().toUpperCase());
 
         // Create the user.
         User user = User.builder()
                 .username(userRequest.getUsername())
-                .password(userRequest.getPassword())
+                .password(new BCryptPasswordEncoder().encode(userRequest.getPassword()))
                 .email(userRequest.getEmail())
                 .phoneNumber(userRequest.getPhoneNumber())
                 .role(userRoleEnum)
@@ -101,7 +102,7 @@ public class UserService {
         }
     }
 
-    private void validateUsernameAndEmail(CreateUserRequest userRequest) {
+    private void checkDataUniqueness(CreateUserRequest userRequest) {
         // Check if the email unique
         if (userRepository.findUserByEmail(userRequest.getEmail()) != null) {
             log.warn("User with the username {} tried to sign up with a used email: {}",
@@ -114,6 +115,13 @@ public class UserService {
             log.warn("User with the email {} tried to sign up with a used username: {}",
                     userRequest.getEmail(), userRequest.getUsername());
             throw new ApiException("The username is used");
+        }
+
+        // Check if the phone number is unique
+        if(userRepository.findUserByPhoneNumber(userRequest.getPhoneNumber()) != null){
+            log.warn("User with the email {} tried to sign up with a used phone number: {}",
+                    userRequest.getEmail(), userRequest.getPhoneNumber());
+            throw new ApiException("The phone number is used");
         }
     }
 
