@@ -1,11 +1,15 @@
 package com.ayman.realestatetransactionsystem.model.dto;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CreatePropertyRequest {
 
     @NotEmpty(message = "The title can not be empty")

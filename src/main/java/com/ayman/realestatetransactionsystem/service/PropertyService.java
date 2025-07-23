@@ -17,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimNames;
-import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -33,17 +31,12 @@ public class PropertyService {
     private final UserRepository userRepository;
     private final CityRepository cityRepository;
     private final PropertyOwnerShipRepository propertyOwnerShipRepository;
+    private final CommonService commonService;
 
     public void addProperty(CreatePropertyRequest propertyRequest) {
         // Get Broker username for logging
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (!(auth instanceof JwtAuthenticationToken jwtAuth)) {
-            throw new ApiException("Token not available");
-        }
-
-        Jwt jwt = jwtAuth.getToken();
-        String brokerUsername = jwt.getClaim("preferred_username");
-
+        String brokerUsername = commonService.
+                getUsernameFromToken(SecurityContextHolder.getContext().getAuthentication());
         // Get the user and check if the user in the system
         User user = getUserOrThrow(propertyRequest.getOwnerUsername());
 
@@ -70,6 +63,8 @@ public class PropertyService {
                 .location(propertyRequest.getLocation())
                 .city(city)
                 .ownershipSet(Set.of(propertyOwnership))
+                .broker(userRepository.findUserByUsername(brokerUsername))
+                .owner(user)
                 .build();
 
         propertyOwnership.setProperty(property);

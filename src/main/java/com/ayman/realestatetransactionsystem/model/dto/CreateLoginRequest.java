@@ -1,12 +1,12 @@
 package com.ayman.realestatetransactionsystem.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CreateLoginRequest {
     private String username;
     private String password;

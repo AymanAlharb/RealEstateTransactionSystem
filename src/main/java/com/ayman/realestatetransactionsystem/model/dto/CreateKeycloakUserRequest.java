@@ -1,15 +1,16 @@
 package com.ayman.realestatetransactionsystem.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CreateKeycloakUserRequest {
+
     private String username;
     private boolean enabled;
     private List<Credentials> credentials;

@@ -28,6 +28,7 @@ public class PropertyDocument {
     private double price;
 
     @Field(type = FieldType.Keyword, name = "status")
+    @Enumerated(EnumType.STRING)
     private TransectionStatusEnum status;
 
     @Field(type = FieldType.Text, name = "location")

@@ -1,6 +1,5 @@
 package com.ayman.realestatetransactionsystem.model.dto;
 
-
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
@@ -9,7 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateAssignRoleRequest {
-    private String id;
-    private String name;
+public class CreateApprovalRequest {
+    @Positive
+    private Long transectionId;
+    private Boolean approval;
+    private String reasonOfFailure;
 }

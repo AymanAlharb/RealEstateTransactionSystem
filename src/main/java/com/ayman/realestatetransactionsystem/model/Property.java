@@ -29,6 +29,7 @@ public class Property {
     private double price;
 
     @Column(columnDefinition = "varchar(10) not null")
+    @Enumerated(EnumType.STRING)
     private PropertyStatusEnum status;
 
     @Column(columnDefinition = "varchar(256) not null")
@@ -45,4 +46,12 @@ public class Property {
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Transaction> transactionSet;
+
+    @ManyToOne
+    @JsonIgnore
+    private User broker;
+
+    @ManyToOne
+    @JsonIgnore
+    private User owner;
 }

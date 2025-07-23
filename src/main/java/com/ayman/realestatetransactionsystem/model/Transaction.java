@@ -20,12 +20,12 @@ public class Transaction {
 
     private double amount;
 
-    // Initially the transection is pending,
-    // until both seller and broker approve the transection.
-    private TransectionStatusEnum status = TransectionStatusEnum.PENDING;
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(24) not null")
+    private TransectionStatusEnum status;
 
-    @Column(columnDefinition = "varchar(256) not null")
-    private String reasonOfFailer;
+    @Column(columnDefinition = "varchar(256)")
+    private String reasonOfFailure;
 
     @Column(columnDefinition = "date not null")
     private LocalDateTime date;

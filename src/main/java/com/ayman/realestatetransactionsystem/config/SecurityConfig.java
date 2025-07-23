@@ -29,8 +29,15 @@ public class SecurityConfig {
                         "/api/v1/user/login",
                         "/api/v1/city/add")
                 .permitAll()
-                .requestMatchers("/api/v1/property/add")
+                .requestMatchers("/api/v1/property/add",
+                        "/api/v1/transection/broker-process-transection")
                 .hasRole("BROKER")
+                .requestMatchers("/api/v1/transection/request/")
+                .hasRole("BUYER")
+                .requestMatchers("/api/v1/transection/seller-process-transection")
+                .hasRole("SELLER")
+                .requestMatchers("/api/v1/account/add")
+                .hasAnyRole("BROKER", "SELLER", "BUYER")
                 .anyRequest()
                 .authenticated();
 

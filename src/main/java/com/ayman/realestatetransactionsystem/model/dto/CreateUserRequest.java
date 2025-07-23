@@ -1,10 +1,15 @@
 package com.ayman.realestatetransactionsystem.model.dto;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CreateUserRequest {
+
     @NotEmpty(message = "The username can not be empty.")
     @Size(min = 4, max = 20,
             message = "The username can not be shorter than 4 characters and not longer than 20 characters")

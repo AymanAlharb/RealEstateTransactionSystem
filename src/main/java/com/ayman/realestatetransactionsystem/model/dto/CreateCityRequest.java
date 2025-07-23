@@ -1,13 +1,17 @@
 package com.ayman.realestatetransactionsystem.model.dto;
 
 import jakarta.validation.constraints.NotEmpty;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CreateCityRequest {
-    @NotEmpty(message = "The account number can not be empty")
+    @NotEmpty(message = "The city name can not be empty")
     private String name;
 
-    @NotEmpty(message = "The balance can not be empty")
+    @NotEmpty(message = "The region can not be empty")
     private String region;
 }

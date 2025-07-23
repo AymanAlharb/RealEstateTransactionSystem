@@ -95,10 +95,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400).body(new ApiResponse(msg));
     }
     // RuntimeException
-    @ExceptionHandler(value = RuntimeException.class)
-    public ResponseEntity<ApiResponse> RuntimeException(RuntimeException e) {
-        String msg = e.getMessage();
-        return ResponseEntity.status(400).body(new ApiResponse(msg));
-    }
+//    @ExceptionHandler(value = RuntimeException.class)
+//    public ResponseEntity<ApiResponse> RuntimeException(RuntimeException e) {
+//        String msg = e.getMessage();
+//        return ResponseEntity.status(400).body(new ApiResponse(msg));
+//    }
 
 }
