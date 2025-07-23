@@ -1,17 +1,16 @@
 package com.ayman.realestatetransactionsystem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Builder
 @Entity
 public class Notification {
     @Id
@@ -25,5 +24,6 @@ public class Notification {
     private LocalDateTime date;
 
     @ManyToOne
+    @JsonIgnore
     private User receiver;
 }

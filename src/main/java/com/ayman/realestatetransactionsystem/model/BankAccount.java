@@ -1,15 +1,13 @@
 package com.ayman.realestatetransactionsystem.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Builder
 @Entity
 public class BankAccount {
     @Id
@@ -23,5 +21,6 @@ public class BankAccount {
     private double balance;
 
     @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 }

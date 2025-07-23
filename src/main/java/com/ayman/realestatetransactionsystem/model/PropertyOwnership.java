@@ -1,17 +1,15 @@
 package com.ayman.realestatetransactionsystem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
-
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Builder
 @Entity
 public class PropertyOwnership {
     @Id
@@ -25,8 +23,10 @@ public class PropertyOwnership {
     private LocalDateTime ownershipDate;
 
     @ManyToOne
+    @JsonIgnore
     private Property property;
 
     @ManyToOne
-    private User user;
+    @JsonIgnore
+    private User owner;
 }

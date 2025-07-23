@@ -1,17 +1,16 @@
 package com.ayman.realestatetransactionsystem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Builder
 @Entity
 public class City {
     @Id
@@ -24,6 +23,7 @@ public class City {
     @Column(columnDefinition = "varchar(32) not null")
     private String region;
 
-    @OneToMany
+    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Property> properties;
 }

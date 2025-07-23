@@ -1,6 +1,6 @@
 package com.ayman.realestatetransactionsystem.config;
 
-import com.ayman.realestatetransactionsystem.service.JwtAuthConverter;
+import com.ayman.realestatetransactionsystem.service.JwtAuthConverterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,15 +17,20 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthConverter jwtAuthConverter;
+    private final JwtAuthConverterService jwtAuthConverter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/user/register", "/api/v1/user/login")
+                .requestMatchers("/api/v1/user/register",
+                        "/api/v1/user/login",
+                        "/api/v1/city/add")
                 .permitAll()
+                .requestMatchers("/api/v1/property/add")
+                .hasRole("BROKER")
                 .anyRequest()
                 .authenticated();
 

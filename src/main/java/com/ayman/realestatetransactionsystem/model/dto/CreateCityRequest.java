@@ -9,5 +9,5 @@ public class CreateCityRequest {
     private String name;
 
     @NotEmpty(message = "The balance can not be empty")
-    private double region;
+    private String region;
 }

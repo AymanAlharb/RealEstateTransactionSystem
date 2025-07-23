@@ -1,18 +1,18 @@
 package com.ayman.realestatetransactionsystem.model;
 
 import com.ayman.realestatetransactionsystem.model.enums.PropertyStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Builder
 @Entity
 public class Property {
     @Id
@@ -35,11 +35,14 @@ public class Property {
     private String location;
 
     @ManyToOne
+    @JsonIgnore
     private City city;
 
-    @OneToMany
+    @JsonIgnore
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
     private Set<PropertyOwnership> ownershipSet;
 
-    @OneToMany
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Transaction> transactionSet;
 }

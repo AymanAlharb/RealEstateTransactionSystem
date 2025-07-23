@@ -1,15 +1,17 @@
 package com.ayman.realestatetransactionsystem.model;
 
 import com.ayman.realestatetransactionsystem.model.enums.UserRoleEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Set;
 
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Builder
 @Entity
 @Table(name = "users")
 public class User {
@@ -33,15 +35,25 @@ public class User {
     @Column(columnDefinition = "varchar(8) not null")
     private UserRoleEnum role;
 
-    @OneToOne
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private BankAccount bankAccount;
 
-    @OneToMany
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Notification> notificationSet;
 
-    @OneToMany
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private Set<PropertyOwnership> propertyOwnershipSet;
 
-    @OneToMany
-    private Set<Transaction> transactionSet;
+    @OneToMany(mappedBy = "seller")
+    @JsonIgnore
+    private Set<Transaction> sellerTransactionSet;
+
+    @OneToMany(mappedBy = "buyer")
+    @JsonIgnore
+    private Set<Transaction> buyerTransactionSet;
+
+    @OneToMany(mappedBy = "broker")
+    @JsonIgnore
+    private Set<Transaction> brokerTransactionSet;
 }

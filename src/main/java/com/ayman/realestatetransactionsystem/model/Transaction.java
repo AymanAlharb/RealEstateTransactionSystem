@@ -1,18 +1,17 @@
 package com.ayman.realestatetransactionsystem.model;
 
 import com.ayman.realestatetransactionsystem.model.enums.TransectionStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Builder
 @Entity
 public class Transaction {
     @Id
@@ -32,14 +31,18 @@ public class Transaction {
     private LocalDateTime date;
 
     @ManyToOne
+    @JsonIgnore
     private Property property;
 
     @ManyToOne
+    @JsonIgnore
     private User buyer;
 
     @ManyToOne
+    @JsonIgnore
     private User seller;
 
     @ManyToOne
+    @JsonIgnore
     private User broker;
 }

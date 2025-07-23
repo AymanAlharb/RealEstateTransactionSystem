@@ -34,6 +34,7 @@ import java.util.stream.StreamSupport;
 @Service
 public class UserService {
 
+
     @Value("${add-user-url}")
     String addUserUrl;
     @Value("${get-user-keycloak-url}")
@@ -59,7 +60,6 @@ public class UserService {
     public void registerUser(CreateUserRequest userRequest) {
 
         checkDataUniqueness(userRequest);
-        UserRoleEnum userRoleEnum = assignRoleEnum(userRequest.getRole().toUpperCase());
 
         // Create the user.
         User user = User.builder()
@@ -67,7 +67,7 @@ public class UserService {
                 .password(new BCryptPasswordEncoder().encode(userRequest.getPassword()))
                 .email(userRequest.getEmail())
                 .phoneNumber(userRequest.getPhoneNumber())
-                .role(userRoleEnum)
+                .role(assignRoleEnum(userRequest.getRole().toUpperCase()))
                 .build();
 
         // Add User to Keycloak realm.
@@ -79,13 +79,19 @@ public class UserService {
     }
 
     public String login(CreateLoginRequest loginRequest) {
+        // Validate login info
+        User user = userRepository.findUserByUsername(loginRequest.getUsername());
+        if(user == null) throw new ApiException("Wrong username or password");
+        if(!(new BCryptPasswordEncoder().matches(loginRequest.getPassword(), user.getPassword()))){
+            throw new ApiException("Wrong username or password");
+        }
         // Build URL Encode
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("client_id", resourceId);
         formData.add("grant_type", "password");
-        formData.add("password", loginRequest.getPassword());
+        formData.add("password", user.getPassword());
         formData.add("username", loginRequest.getUsername());
-        return getUserToken(formData);
+        return getUserToken(formData, loginRequest.getUsername());
     }
 
     private UserRoleEnum assignRoleEnum(String role) {
@@ -133,7 +139,7 @@ public class UserService {
             formData.add("client_id", client_id);
             formData.add("client_secret", client_secret);
             formData.add("grant_type", "client_credentials");
-            adminToken = getUserToken(formData);
+            adminToken = getUserToken(formData, "admin");
             log.info(adminToken);
         }
         // Add user to realm
@@ -145,11 +151,11 @@ public class UserService {
         // Get role id
         String roleId = getRoleId(clientId, user.getRole().toString());
         // Assign role
-        assignRoleOnKeycloak(userKeycloakId, clientId, roleId, user.getRole().toString().toUpperCase());
+        assignRoleOnKeycloak(userKeycloakId, clientId, roleId, user.getRole().toString().toUpperCase(), user.getUsername());
 
     }
 
-    private String getUserToken(MultiValueMap<String, String> formData) {
+    private String getUserToken(MultiValueMap<String, String> formData, String username) {
 
         String response = webClient.post()
                 .uri(getUserTokenUrl)
@@ -167,7 +173,7 @@ public class UserService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
+        log.info("{} logged in", username);
         return root.get("access_token").asText();
     }
 
@@ -255,8 +261,9 @@ public class UserService {
         return root.get("id").asText();
     }
 
-    private void assignRoleOnKeycloak(String userId, String clientId, String roleId, String roleName) {
+    private void assignRoleOnKeycloak(String userId, String clientId, String roleId, String roleName, String username) {
         CreateAssignRoleRequest request = new CreateAssignRoleRequest(roleId, roleName);
+
         webClient.post()
                 .uri(assignRoleUrl + userId + "/role-mappings/clients/" + clientId)
                 .header("Content-Type", "application/json")
@@ -267,5 +274,6 @@ public class UserService {
                 .bodyToMono(String.class)
                 .block();
 
+        log.info("{} assigned with {} role", username, roleName);
     }
 }
