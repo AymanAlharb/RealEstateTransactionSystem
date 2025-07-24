@@ -1,5 +1,6 @@
 package com.ayman.realestatetransactionsystem.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class BankAccount {
     private double balance;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 }

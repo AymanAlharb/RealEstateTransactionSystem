@@ -36,6 +36,7 @@ public class User {
     private UserRoleEnum role;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private BankAccount bankAccount;
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
@@ -43,6 +44,7 @@ public class User {
     private Set<Notification> notificationSet;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<PropertyOwnership> propertyOwnershipSet;
 
     @OneToMany(mappedBy = "seller")

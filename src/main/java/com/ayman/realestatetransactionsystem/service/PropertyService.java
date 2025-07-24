@@ -6,6 +6,7 @@ import com.ayman.realestatetransactionsystem.model.Property;
 import com.ayman.realestatetransactionsystem.model.PropertyOwnership;
 import com.ayman.realestatetransactionsystem.model.User;
 import com.ayman.realestatetransactionsystem.model.dto.CreatePropertyRequest;
+import com.ayman.realestatetransactionsystem.model.dto.CreateUpdatePropertyRequest;
 import com.ayman.realestatetransactionsystem.model.enums.PropertyStatusEnum;
 import com.ayman.realestatetransactionsystem.model.enums.UserRoleEnum;
 import com.ayman.realestatetransactionsystem.repository.CityRepository;
@@ -14,11 +15,9 @@ import com.ayman.realestatetransactionsystem.repository.PropertyRepository;
 import com.ayman.realestatetransactionsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -59,7 +58,7 @@ public class PropertyService {
                 .title(propertyRequest.getTitle())
                 .description(propertyRequest.getDescription())
                 .price(propertyRequest.getPrice())
-                .status(assignPropertyStatus(propertyRequest.getStatus()))
+                .status(assignPropertyStatus(propertyRequest.getStatus().toUpperCase()))
                 .location(propertyRequest.getLocation())
                 .city(city)
                 .ownershipSet(Set.of(propertyOwnership))
@@ -72,6 +71,44 @@ public class PropertyService {
         propertyRepository.save(property);
         log.info("Broker: {} added the property {} to {}", brokerUsername, property.getTitle(), user.getUsername());
     }
+
+    @Transactional
+    public void deleteProperty(Long propertyId){
+        // Check if the property exists and belongs to the seller
+        Property property = validate(propertyId);
+
+        // Delete
+        propertyRepository.delete(property);
+    }
+
+    @Transactional
+    public void updateProperty(Long propertyId, CreateUpdatePropertyRequest updatePropertyRequest){
+        // Check if the property exists and belongs to the seller
+        Property property = validate(propertyId);
+
+        // Update
+        property.setTitle(updatePropertyRequest.getTitle());
+        property.setDescription(updatePropertyRequest.getDescription());
+        property.setPrice(updatePropertyRequest.getPrice());
+        property.setStatus(assignPropertyStatus(updatePropertyRequest.getStatus()));
+        propertyRepository.save(property);
+    }
+
+    private Property validate(Long propertyId){
+        // Get seller
+        User seller = userRepository.findUserByUsername(commonService
+                .getUsernameFromToken(SecurityContextHolder.getContext().getAuthentication()));
+
+        // Get property
+        Property property = propertyRepository.findPropertyById(propertyId);
+        if(property == null) throw new ApiException("No property with the id " + propertyId + " exists.");
+        // Check if seller owns the property
+        if(!property.getOwner().equals(seller))
+            throw new ApiException("Seller does not owns the property.");
+
+        return property;
+    }
+
 
     private User getUserOrThrow(String username) {
         User user = userRepository.findUserByUsername(username);

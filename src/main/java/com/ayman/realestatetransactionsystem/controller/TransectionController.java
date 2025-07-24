@@ -39,4 +39,10 @@ public class TransectionController {
         transectionService.payment(paymentRequest);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Payment successfully"));
     }
+
+    @PatchMapping("/cancel/{transectionId}")
+    public ResponseEntity<ApiResponse> cancelTransection(@PathVariable Long transectionId){
+        transectionService.cancelTransection(transectionId);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Transection canceled successfully"));
+    }
 }

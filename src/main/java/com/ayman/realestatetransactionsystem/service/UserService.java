@@ -268,8 +268,7 @@ public class UserService {
                 .uri(assignRoleUrl + userId + "/role-mappings/clients/" + clientId)
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + adminToken)
-                .body(Mono.just(List.of(request)), new ParameterizedTypeReference<>() {
-                })
+                .body(Mono.just(List.of(request)), new ParameterizedTypeReference<>() {})
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
