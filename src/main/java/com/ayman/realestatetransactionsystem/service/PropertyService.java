@@ -31,6 +31,7 @@ public class PropertyService {
     private final CityRepository cityRepository;
     private final PropertyOwnerShipRepository propertyOwnerShipRepository;
     private final CommonService commonService;
+    private final SearchPropertyService searchPropertyService;
 
     public void addProperty(CreatePropertyRequest propertyRequest) {
         // Get Broker username for logging
@@ -70,6 +71,9 @@ public class PropertyService {
 
         propertyRepository.save(property);
         log.info("Broker: {} added the property {} to {}", brokerUsername, property.getTitle(), user.getUsername());
+
+        // Add to elasticsearch database
+        searchPropertyService.createProperty(property);
     }
 
     @Transactional

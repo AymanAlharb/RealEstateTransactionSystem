@@ -27,13 +27,15 @@ public class PropertyDocument {
     @Field(type = FieldType.Double, name = "price")
     private double price;
 
-    @Field(type = FieldType.Keyword, name = "status")
-    @Enumerated(EnumType.STRING)
-    private TransectionStatusEnum status;
+    @Field(type = FieldType.Text, name = "status")
+    private String status;
 
     @Field(type = FieldType.Text, name = "location")
     private String location;
 
     @Field(type = FieldType.Text, name = "city")
     private String city;
+
+    @Field(type = FieldType.Text, name = "owner")
+    private String ownerName;
 }
