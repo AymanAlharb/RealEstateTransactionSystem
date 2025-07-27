@@ -27,13 +27,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/user/register",
                         "/api/v1/user/login",
-                        "/api/v1/city/add",
                         "/api/v1/search/get-by-city-name/*",
                         "/api/v1/search/get-by-price-range/*/*")
                 .permitAll()
                 .requestMatchers("/api/v1/property/add",
                         "/api/v1/transection/broker-process-transection",
-                        "/api/v1/transection/cancel/*")
+                        "/api/v1/transection/cancel/*,",
+                        "/api/v1/city/add")
                 .hasRole("BROKER")
                 .requestMatchers("/api/v1/transection/request/")
                 .hasRole("BUYER")

@@ -75,7 +75,7 @@ public class UserService {
 
         // Save to the database.
         userRepository.save(user);
-        log.info("New {} with the username {} signup", user.getRole(), user.getUsername());
+        log.info("New {} with the username {} signed-up", user.getRole(), user.getUsername());
     }
 
     public String login(CreateLoginRequest loginRequest) {
@@ -140,7 +140,6 @@ public class UserService {
             formData.add("client_secret", client_secret);
             formData.add("grant_type", "client_credentials");
             adminToken = getUserToken(formData, "admin");
-            log.info(adminToken);
         }
         // Add user to realm
         addUserToRealm(user, adminToken);
@@ -178,14 +177,7 @@ public class UserService {
     }
 
     private void addUserToRealm(User user, String adminToken) {
-        boolean enabledAccount = true;
-        String type = "password";
-        boolean temporaryPassword = false;
-        String value = user.getPassword();
-        List<CreateKeycloakUserRequest.Credentials> credentials = new ArrayList<>();
-        CreateKeycloakUserRequest.Credentials credential = new CreateKeycloakUserRequest.Credentials(type, value, temporaryPassword);
-        credentials.add(0, credential);
-        CreateKeycloakUserRequest request = new CreateKeycloakUserRequest(user.getUsername(), enabledAccount, credentials);
+        CreateKeycloakUserRequest request = getCreateKeycloakUserRequest(user);
 
         webClient.post()
                 .uri(addUserUrl)
@@ -197,6 +189,17 @@ public class UserService {
                 .block();
         log.info("User with the username: {} added to keycloak realm successfully", user.getUsername());
 
+    }
+
+    private static CreateKeycloakUserRequest getCreateKeycloakUserRequest(User user) {
+        boolean enabledAccount = true;
+        String type = "password";
+        boolean temporaryPassword = false;
+        String value = user.getPassword();
+        List<CreateKeycloakUserRequest.Credentials> credentials = new ArrayList<>();
+        CreateKeycloakUserRequest.Credentials credential = new CreateKeycloakUserRequest.Credentials(type, value, temporaryPassword);
+        credentials.add(0, credential);
+        return new CreateKeycloakUserRequest(user.getUsername(), enabledAccount, credentials);
     }
 
     private String getUserKeycloakId(String username) {

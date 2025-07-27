@@ -1,5 +1,6 @@
 package com.ayman.realestatetransactionsystem.service;
 
+import com.ayman.realestatetransactionsystem.exception.ApiException;
 import com.ayman.realestatetransactionsystem.model.BankAccount;
 import com.ayman.realestatetransactionsystem.model.User;
 import com.ayman.realestatetransactionsystem.model.dto.CreateBankRequest;
@@ -22,6 +23,10 @@ public class BankAccountService {
         // Get the user
         User user = userRepository.findUserByUsername(commonService.
                 getUsernameFromToken(SecurityContextHolder.getContext().getAuthentication()));
+
+        // Check if the user has a bank account
+        if(user.getBankAccount() != null)
+            throw new ApiException("User already has an account.");
 
         // Create
         BankAccount bankAccount = BankAccount.builder()

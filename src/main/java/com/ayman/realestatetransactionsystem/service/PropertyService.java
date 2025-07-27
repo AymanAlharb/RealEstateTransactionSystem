@@ -96,6 +96,7 @@ public class PropertyService {
         property.setPrice(updatePropertyRequest.getPrice());
         property.setStatus(assignPropertyStatus(updatePropertyRequest.getStatus()));
         propertyRepository.save(property);
+        log.info("{} updated", property);
     }
 
     private Property validate(Long propertyId){
@@ -106,6 +107,7 @@ public class PropertyService {
         // Get property
         Property property = propertyRepository.findPropertyById(propertyId);
         if(property == null) throw new ApiException("No property with the id " + propertyId + " exists.");
+
         // Check if seller owns the property
         if(!property.getOwner().equals(seller))
             throw new ApiException("Seller does not owns the property.");

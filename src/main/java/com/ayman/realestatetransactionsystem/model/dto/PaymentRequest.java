@@ -1,8 +1,6 @@
 package com.ayman.realestatetransactionsystem.model.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Getter
@@ -12,9 +10,11 @@ import lombok.*;
 @Builder
 public class PaymentRequest {
 
+    @NotNull
     @Positive
     private Long transectionId;
 
+    @NotEmpty
     @Size(max = 3,
             min = 3,
             message = "The cvv must be exactly 3 characters")

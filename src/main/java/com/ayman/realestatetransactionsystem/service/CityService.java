@@ -17,6 +17,7 @@ public class CityService {
     public void addCity(CreateCityRequest cityRequest) {
         if (cityRepository.getCityByNameAndRegion(cityRequest.getName(), cityRequest.getRegion()) != null)
             throw new ApiException("City exists in the system");
+
         City city = City.builder()
                 .name(cityRequest.getName())
                 .region(cityRequest.getRegion())

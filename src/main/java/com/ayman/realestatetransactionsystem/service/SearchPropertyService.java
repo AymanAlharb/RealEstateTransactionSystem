@@ -38,7 +38,7 @@ public class SearchPropertyService {
         return propertyElasticsearchRepository.findByCity(cityName);
     }
 
-    public List<PropertyDocument> getPropertiesByCPriceRange(double min, double max) {
+    public List<PropertyDocument> getPropertiesByPriceRange(double min, double max) {
         return propertyElasticsearchRepository.findByPriceBetween(min, max);
     }
 }

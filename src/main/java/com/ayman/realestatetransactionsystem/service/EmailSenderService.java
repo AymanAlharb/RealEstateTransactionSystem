@@ -37,7 +37,6 @@ public class EmailSenderService {
 
     @RabbitListener(queues = {"${rabbitmq-json-queue-name}"})
     private void listener(EmailStruct emailStruct) {
-        log.info("Hello from here in email");
         createNotificationAndSendEmail(emailStruct.getSeller(), sellerMessage);
         createNotificationAndSendEmail(emailStruct.getBroker(), brokerMessage);
         createNotificationAndSendEmail(emailStruct.getBuyer(), buyerMessage);
