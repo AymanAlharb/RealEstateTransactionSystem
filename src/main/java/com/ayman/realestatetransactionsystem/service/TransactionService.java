@@ -8,7 +8,6 @@ import com.ayman.realestatetransactionsystem.model.dto.PaymentRequest;
 import com.ayman.realestatetransactionsystem.model.enums.PropertyStatusEnum;
 import com.ayman.realestatetransactionsystem.model.enums.TransectionStatusEnum;
 import com.ayman.realestatetransactionsystem.repository.*;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -17,22 +16,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
+import static com.ayman.realestatetransactionsystem.constant.EmailConstant.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class TransectionService {
+public class TransactionService {
     private final TransectionRepository transectionRepository;
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
     private final CommonService commonService;
     private final BankAccountRepository bankRepository;
     private final PropertyOwnerShipRepository ownerShipRepository;
-    private final EmailSenderService emailSenderService;
-    private final NotificationRepository notificationRepository;
     private final RabbitTemplate rabbitTemplate;
 
     @Value("${rabbitmq-exchange-name}")
@@ -43,9 +41,6 @@ public class TransectionService {
 
     @Value("${rabbitmq-json-routing-key-name}")
     private String jsonRoutingKey;
-
-
-
 
     @Transactional
     public void requestProperty(Long propertyId) {
@@ -75,8 +70,8 @@ public class TransectionService {
         property.setStatus(PropertyStatusEnum.LOCKED);
         propertyRepository.save(property);
         transectionRepository.save(transaction);
-
-        // TODO : Notification to seller
+        sendEmail(buyer, REQUEST_EMAIL_SUBJECT, String.format(BUYER_REQUEST_MESSAGE, property.getTitle()));
+        sendEmail(property.getOwner(), REQUEST_EMAIL_SUBJECT, String.format(SELLER_REQUEST_MESSAGE, buyer.getUsername(), property.getTitle()));
     }
 
     public void sellerApproveOrDissApprove(CreateApprovalRequest approvalRequest) {
@@ -98,13 +93,25 @@ public class TransectionService {
             throw new ApiException("Transection " + transaction.getStatus() + " and can not be approved by the seller");
 
         if (approvalRequest.getApproval()) {
+            // Modify transaction
             transaction.setStatus(TransectionStatusEnum.APPROVED_BY_SELLER);
             transectionRepository.save(transaction);
+
+            // Send emails
+            sendEmail(transaction.getBuyer(), REQUEST_APPROVAL_EMAIL_SUBJECT,
+                    String.format(BUYER_APPROVAL_MESSAGE, transaction.getProperty().getTitle(), seller));
+            sendEmail(transaction.getBroker(), REQUEST_EMAIL_SUBJECT, String.format(BROKER_REQUEST_MESSAGE, transaction.getBuyer().getUsername(), transaction.getProperty().getTitle()));
+
             log.info("{} approved the transection with the id {}", seller.getUsername(), approvalRequest.getTransectionId());
-            // TODO : email notification
         } else {
+            // Modify transaction
             transaction.setStatus(TransectionStatusEnum.FAILED);
             transaction.setReasonOfFailure(String.valueOf(approvalRequest.getReasonOfFailure()));
+
+            // Send email
+            sendEmail(transaction.getBuyer(), REQUEST_DENIED_EMAIL_SUBJECT,
+                    String.format(BUYER_DENIAL_MESSAGE, transaction.getProperty().getTitle(), seller, approvalRequest.getReasonOfFailure()));
+
             log.info("{} unapproved the transection with the id {}", seller.getUsername(), approvalRequest.getTransectionId());
         }
     }
@@ -128,21 +135,40 @@ public class TransectionService {
             throw new ApiException("Transection " + transaction.getStatus() + " and can not be approved by the broker");
 
         if (approvalRequest.getApproval()) {
+            // Modify transaction
             transaction.setStatus(TransectionStatusEnum.APPROVED);
             transectionRepository.save(transaction);
+
+            // Send email
+            sendEmail(transaction.getBuyer(), REQUEST_APPROVAL_EMAIL_SUBJECT,
+                    String.format(BUYER_APPROVAL_MESSAGE, transaction.getProperty().getTitle(), broker));
+
             log.info("{} approved the transection with the id {}", broker.getUsername(), approvalRequest.getTransectionId());
         } else {
+            // Modify transaction
             transaction.setStatus(TransectionStatusEnum.FAILED);
             transaction.setReasonOfFailure(approvalRequest.getReasonOfFailure());
+
+            // Send email
+            sendEmail(transaction.getBuyer(), REQUEST_DENIED_EMAIL_SUBJECT,
+                    String.format(BUYER_DENIAL_MESSAGE, transaction.getProperty().getTitle(), broker, approvalRequest.getReasonOfFailure()));
+
             log.info("{} unapproved the transection with the id {}", broker.getUsername(), approvalRequest.getTransectionId());
         }
     }
 
     public void payment(PaymentRequest paymentRequest) {
+
         // Get Transection
         Transaction transaction = transectionRepository.findTransactionById(paymentRequest.getTransectionId());
         if (transaction == null)
             throw new ApiException("No transection with the id " + paymentRequest.getTransectionId() + " exists");
+
+        // Check the card expiry date
+        if (paymentRequest.getExpiryDate().isAfter(LocalDate.now())) {
+            transaction.setStatus(TransectionStatusEnum.PAYMENT_FAILED);
+            throw new ApiException("Card expired");
+        }
 
         // Get buyer
         User buyer = userRepository.findUserByUsername(commonService.
@@ -171,15 +197,15 @@ public class TransectionService {
         // Change transection status.
         transaction.setStatus(TransectionStatusEnum.COMPLETED);
         transectionRepository.save(transaction);
-
-        sendEmail(transaction);
     }
-    private void sendEmail(Transaction transaction){
-        EmailStruct emailStruct = new EmailStruct(transaction.getSeller(), transaction.getBroker(), transaction.getBuyer());
+
+    private void sendEmail(User receiver, String subject, String body) {
+        EmailStruct emailStruct = new EmailStruct(receiver, subject, body);
         rabbitTemplate.convertAndSend(exchange, jsonRoutingKey, emailStruct);
 
     }
-    public void cancelTransection(Long transectionId){
+
+    public void cancelTransection(Long transectionId) {
         // Get Transection
         Transaction transaction = transectionRepository.findTransactionById(transectionId);
         if (transaction == null)
@@ -190,14 +216,13 @@ public class TransectionService {
                 getUsernameFromToken(SecurityContextHolder.getContext().getAuthentication()));
 
         // Check if buyer has authorities on transection
-        if(!transaction.getBroker().equals(broker))
+        if (!transaction.getBroker().equals(broker))
             throw new ApiException("Broker can not edit the transection");
 
         transaction.setStatus(TransectionStatusEnum.FAILED);
         transaction.getProperty().setStatus(PropertyStatusEnum.AVAILABLE);
         propertyRepository.save(transaction.getProperty());
     }
-
 
 
     private void validateTransection(User buyer, Transaction transaction) {
@@ -239,10 +264,6 @@ public class TransectionService {
             case HIDDEN -> throw new ApiException("This is a hidden property");
             case LOCKED -> throw new ApiException("This is a locked property");
             case SOLD -> throw new ApiException("This is a sold property");
-            default -> {
-                return;
-            }
-
         }
     }
 
@@ -255,19 +276,24 @@ public class TransectionService {
         double price = transaction.getAmount();
 
         // Check and deduct balance
-        if (price > bankAccount.getBalance())
+        if (price > bankAccount.getBalance()) {
+            transaction.setStatus(TransectionStatusEnum.PAYMENT_FAILED);
             throw new ApiException("Insufficient balance");
+        }
 
         buyer.getBankAccount().setBalance(buyer.getBankAccount().getBalance() - price);
         userRepository.save(buyer);
-        double brokerPercentage = 0.049375;
-
-        // Transfer to broker
-        brokerAccount.setBalance(brokerAccount.getBalance() + (price * brokerPercentage));
-
-        price -= price * brokerPercentage;
-
         // Transfer to seller
         sellerAccount.setBalance(sellerAccount.getBalance() + price);
+        sendEmail(buyer, PAYMENT_EMAIL_SUBJECT, String.format(BUYER_PAYMENT_MESSAGE, transaction.getProperty().getTitle()));
+        sendEmail(transaction.getSeller(), PAYMENT_EMAIL_SUBJECT, String.format(SELLER_PAYMENT_MESSAGE, buyer.getUsername(), transaction.getProperty().getTitle()));
+        double brokerCommission = price * BROKER_COMMISSION_RATE;
+
+        // Deduct from seller
+        sellerAccount.setBalance(sellerAccount.getBalance() - brokerCommission);
+        // Transfer to broker
+        brokerAccount.setBalance(brokerAccount.getBalance() + brokerCommission);
+
+        sendEmail(transaction.getBroker(), PAYMENT_EMAIL_SUBJECT, String.format(BROKER_PAYMENT_MESSAGE, transaction.getProperty().getTitle(), brokerCommission));
     }
 }

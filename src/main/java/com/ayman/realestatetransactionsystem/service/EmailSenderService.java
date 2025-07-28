@@ -31,27 +31,23 @@ public class EmailSenderService {
 
     @Value("${EMAIL}")
     private String fromEmail;
-    String buyerMessage = "Your payment has been successful and the property transformation succeed";
-    String brokerMessage = "Property transformation succeed and money transferred successfully";
-    String sellerMessage = "Property transformation succeed and money transferred successfully";
+
 
     @RabbitListener(queues = {"${rabbitmq-json-queue-name}"})
     private void listener(EmailStruct emailStruct) {
-        createNotificationAndSendEmail(emailStruct.getSeller(), sellerMessage);
-        createNotificationAndSendEmail(emailStruct.getBroker(), brokerMessage);
-        createNotificationAndSendEmail(emailStruct.getBuyer(), buyerMessage);
+        createNotificationAndSendEmail(emailStruct.getReceiver(), emailStruct.getSubject(), emailStruct.getBody());
     }
 
-    private void createNotificationAndSendEmail(User receiver, String message) {
+    private void createNotificationAndSendEmail(User receiver, String subject, String body) {
         Notification notification = Notification.builder()
-                .message(message)
+                .message(body)
                 .date(LocalDateTime.now())
                 .receiver(receiver)
                 .build();
         notificationRepository.save(notification);
 
         try {
-            sendEmail(receiver.getEmail(), "Transection update", message);
+            sendEmail(receiver.getEmail(), subject, body);
         } catch (MessagingException | IOException e) {
             throw new RuntimeException(e);
         }

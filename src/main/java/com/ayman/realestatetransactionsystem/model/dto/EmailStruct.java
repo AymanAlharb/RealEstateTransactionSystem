@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class EmailStruct {
-    private User seller;
-    private User broker;
-    private User buyer;
+    private User receiver;
+    private String body;
+    private String subject;
 }
