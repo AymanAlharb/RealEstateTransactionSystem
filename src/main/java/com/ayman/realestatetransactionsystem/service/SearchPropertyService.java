@@ -1,7 +1,6 @@
 package com.ayman.realestatetransactionsystem.service;
 
 import com.ayman.realestatetransactionsystem.model.dto.request.PropertyMessage;
-import com.ayman.realestatetransactionsystem.model.entity.Property;
 import com.ayman.realestatetransactionsystem.model.entity.PropertyDocument;
 import com.ayman.realestatetransactionsystem.repository.PropertyElasticsearchRepository;
 import lombok.RequiredArgsConstructor;

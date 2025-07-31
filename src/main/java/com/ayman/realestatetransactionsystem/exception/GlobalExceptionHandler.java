@@ -20,14 +20,6 @@ import java.util.Objects;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
-
-    public ResponseEntity<ApiResponse> DuplicateUsernameException() {
-        ApiResponse response = new ApiResponse("Username used");
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-    }
-
-
     // Our Exception
     @ExceptionHandler(value = ApiException.class)
     public ResponseEntity<ApiResponse> ApiException(ApiException e) {

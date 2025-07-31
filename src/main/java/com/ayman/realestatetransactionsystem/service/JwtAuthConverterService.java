@@ -1,8 +1,6 @@
 package com.ayman.realestatetransactionsystem.service;
 
 import com.ayman.realestatetransactionsystem.properties.KeycloakProperties;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AbstractAuthenticationToken;

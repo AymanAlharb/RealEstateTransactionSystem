@@ -32,7 +32,6 @@ public class PropertyService {
     private final CommonService commonService;
     private final RabbitTemplate rabbitTemplate;
     private final RabbitMQProperties rabbitMQProperties;
-    private final SearchPropertyService searchPropertyService;
 
     public void addProperty(CreatePropertyRequest propertyRequest) {
         // Get Broker username for logging
