@@ -16,5 +16,4 @@ public class EmailConstant {
     public static final String SELLER_REQUEST_MESSAGE = "You received a new request from %s to the property %s";
     public static final String BUYER_REQUEST_MESSAGE = "Your request to the property %s have been delivered successfully";
     public static final String BROKER_REQUEST_MESSAGE = "New request from %s to the property %s";
-    public static final double BROKER_COMMISSION_RATE = 0.049375;
 }

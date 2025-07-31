@@ -1,8 +1,9 @@
 package com.ayman.realestatetransactionsystem.controller;
 
-import com.ayman.realestatetransactionsystem.exception.ApiResponse;
-import com.ayman.realestatetransactionsystem.model.dto.CreateApprovalRequest;
-import com.ayman.realestatetransactionsystem.model.dto.PaymentRequest;
+import com.ayman.realestatetransactionsystem.constant.ApiRoutes;
+import com.ayman.realestatetransactionsystem.model.dto.response.ApiResponse;
+import com.ayman.realestatetransactionsystem.model.dto.request.CreateApprovalRequest;
+import com.ayman.realestatetransactionsystem.model.dto.request.PaymentRequest;
 import com.ayman.realestatetransactionsystem.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/transaction")
+@RequestMapping(ApiRoutes.TRANSACTION)
 @RestController
 public class TransectionController {
     private final TransactionService transactionService;
@@ -73,19 +74,5 @@ public class TransectionController {
     public ResponseEntity<ApiResponse> payment(@RequestBody @Valid PaymentRequest paymentRequest) {
         transactionService.payment(paymentRequest);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Payment successfully"));
-    }
-
-    @Operation(
-            summary = "Broker canceling Transection",
-            description = "Only brokers who has authorities on the property can cancel the transaction",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    description = "Transection id and CVV required"
-            )
-    )
-    @PatchMapping("/cancel/{transactionId}")
-    public ResponseEntity<ApiResponse> cancelTransection(@PathVariable Long transactionId) {
-        transactionService.cancelTransection(transactionId);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Transection canceled successfully"));
     }
 }

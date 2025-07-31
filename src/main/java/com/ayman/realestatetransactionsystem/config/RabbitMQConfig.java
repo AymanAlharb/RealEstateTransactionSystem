@@ -1,5 +1,7 @@
 package com.ayman.realestatetransactionsystem.config;
 
+import com.ayman.realestatetransactionsystem.properties.RabbitMQProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -9,53 +11,40 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@RequiredArgsConstructor
 @Configuration
 public class RabbitMQConfig {
-
-    @Value("${rabbitmq-queue-name}")
-    private String queue;
-
-    @Value("${rabbitmq-json-queue-name}")
-    private String jsonQueue;
-
-    @Value("${rabbitmq-exchange-name}")
-    private String exchange;
-
-    @Value("${rabbitmq-routing-key-name}")
-    private String routingKey;
-
-    @Value("${rabbitmq-json-routing-key-name}")
-    private String jsonRoutingKey;
-
+    private final RabbitMQProperties rabbitMQProperties;
     @Bean
-    public Queue queue() {
-        return new Queue(queue);
+    public Queue emailQueue() {
+        return new Queue(rabbitMQProperties.getEmailQueue().getQueueName());
     }
 
     @Bean
-    public Queue jsonQueue() {
-        return new Queue(jsonQueue);
+    public Queue propertyQueue() {
+        return new Queue(rabbitMQProperties.getPropertyQueue().getQueueName());
     }
 
     @Bean
     public TopicExchange exchange() {
-        return new TopicExchange(exchange);
+        return new TopicExchange(rabbitMQProperties.getExchangeName());
+    }
+
+
+    @Bean
+    public Binding emailQueueBinding() {
+        return BindingBuilder
+                .bind(emailQueue())
+                .to(exchange())
+                .with(rabbitMQProperties.getEmailQueue().getRoutingKeyName());
     }
 
     @Bean
-    public Binding binding() {
+    public Binding propertyBinding() {
         return BindingBuilder
-                .bind(queue())
+                .bind(propertyQueue())
                 .to(exchange())
-                .with(routingKey);
-    }
-
-    @Bean
-    public Binding jsonBinding() {
-        return BindingBuilder
-                .bind(jsonQueue())
-                .to(exchange())
-                .with(jsonRoutingKey);
+                .with(rabbitMQProperties.getPropertyQueue().getRoutingKeyName());
     }
 
     @Bean

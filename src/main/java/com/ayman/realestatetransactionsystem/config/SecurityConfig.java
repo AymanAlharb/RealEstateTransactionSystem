@@ -25,10 +25,14 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/user/register",
-                        "/api/v1/user/login",
+                .requestMatchers("/api/v1/auth/register",
+                        "/api/v1/auth/login",
                         "/api/v1/search/get-by-city-name/*",
-                        "/api/v1/search/get-by-price-range/*/*")
+                        "/api/v1/search/get-by-price-range/*/*",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/index.html")
                 .permitAll()
                 .requestMatchers("/api/v1/property/add",
                         "/api/v1/transection/broker-process-transection",

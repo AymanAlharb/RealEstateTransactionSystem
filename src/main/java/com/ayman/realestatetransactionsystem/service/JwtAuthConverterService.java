@@ -1,5 +1,7 @@
 package com.ayman.realestatetransactionsystem.service;
 
+import com.ayman.realestatetransactionsystem.properties.KeycloakProperties;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
@@ -23,11 +25,11 @@ public class JwtAuthConverterService implements Converter<Jwt, AbstractAuthentic
 
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter =
             new JwtGrantedAuthoritiesConverter();
+    private final KeycloakProperties keycloakProperties;
 
-    @Value("${jwt.auth.converter.principle-attribute}")
-    private String principleAttribute;
-    @Value("${resource-id}")
-    private String resourceId;
+    public JwtAuthConverterService(KeycloakProperties keycloakProperties) {
+        this.keycloakProperties = keycloakProperties;
+    }
 
     @Override
     public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
@@ -44,8 +46,8 @@ public class JwtAuthConverterService implements Converter<Jwt, AbstractAuthentic
 
     private String getPrincipleClaimName(Jwt jwt) {
         String claimName = JwtClaimNames.SUB;
-        if (principleAttribute != null) {
-            claimName = principleAttribute;
+        if (keycloakProperties.getJwt().getPrincipleAttribute() != null) {
+            claimName = keycloakProperties.getJwt().getPrincipleAttribute();
         }
         return jwt.getClaim(claimName);
     }
@@ -61,11 +63,11 @@ public class JwtAuthConverterService implements Converter<Jwt, AbstractAuthentic
 
         resourceAccess = jwt.getClaim("resource_access");
 
-        if (resourceAccess.get(resourceId) == null) {
+        if (resourceAccess.get(keycloakProperties.getResourceId()) == null) {
             return Set.of();
         }
 
-        resource = (Map<String, Object>) resourceAccess.get(resourceId);
+        resource = (Map<String, Object>) resourceAccess.get(keycloakProperties.getResourceId());
         resourceRoles = (Collection<String>) resource.get("roles");
         return resourceRoles
                 .stream()

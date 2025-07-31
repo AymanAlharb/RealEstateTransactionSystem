@@ -1,8 +1,9 @@
 package com.ayman.realestatetransactionsystem.controller;
 
-import com.ayman.realestatetransactionsystem.exception.ApiResponse;
-import com.ayman.realestatetransactionsystem.model.dto.CreateLoginRequest;
-import com.ayman.realestatetransactionsystem.model.dto.CreateUserRequest;
+import com.ayman.realestatetransactionsystem.constant.ApiRoutes;
+import com.ayman.realestatetransactionsystem.model.dto.response.ApiResponse;
+import com.ayman.realestatetransactionsystem.model.dto.request.CreateLoginRequest;
+import com.ayman.realestatetransactionsystem.model.dto.request.CreateUserRequest;
 import com.ayman.realestatetransactionsystem.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -12,9 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/user")
+@RequestMapping(ApiRoutes.AUTH)
 @RestController
-public class UserController {
+public class AuthController {
     private final UserService userService;
 
     @Operation(

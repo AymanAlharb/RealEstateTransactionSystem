@@ -1,6 +1,6 @@
 package com.ayman.realestatetransactionsystem.repository;
 
-import com.ayman.realestatetransactionsystem.model.PropertyDocument;
+import com.ayman.realestatetransactionsystem.model.entity.PropertyDocument;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.ayman.realestatetransactionsystem.exception;
+package com.ayman.realestatetransactionsystem.model.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

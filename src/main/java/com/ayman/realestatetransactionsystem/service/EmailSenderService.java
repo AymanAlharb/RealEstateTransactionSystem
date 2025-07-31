@@ -1,9 +1,8 @@
 package com.ayman.realestatetransactionsystem.service;
 
-import com.ayman.realestatetransactionsystem.model.Notification;
-import com.ayman.realestatetransactionsystem.model.Transaction;
-import com.ayman.realestatetransactionsystem.model.User;
-import com.ayman.realestatetransactionsystem.model.dto.EmailStruct;
+import com.ayman.realestatetransactionsystem.model.entity.Notification;
+import com.ayman.realestatetransactionsystem.model.entity.User;
+import com.ayman.realestatetransactionsystem.model.struct.EmailStruct;
 import com.ayman.realestatetransactionsystem.repository.NotificationRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -33,9 +32,9 @@ public class EmailSenderService {
     private String fromEmail;
 
 
-    @RabbitListener(queues = {"${rabbitmq-json-queue-name}"})
+    @RabbitListener(queues = {"${rabbitmq.email-queue.queue-name}"})
     private void listener(EmailStruct emailStruct) {
-        createNotificationAndSendEmail(emailStruct.getReceiver(), emailStruct.getSubject(), emailStruct.getBody());
+        createNotificationAndSendEmail(emailStruct.getReceiver(), emailStruct.getBody(), emailStruct.getSubject());
     }
 
     private void createNotificationAndSendEmail(User receiver, String subject, String body) {
@@ -45,7 +44,7 @@ public class EmailSenderService {
                 .receiver(receiver)
                 .build();
         notificationRepository.save(notification);
-
+        log.info("Notification created for the user: {}", receiver.getUsername());
         try {
             sendEmail(receiver.getEmail(), subject, body);
         } catch (MessagingException | IOException e) {

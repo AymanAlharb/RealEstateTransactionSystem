@@ -1,4 +1,4 @@
-package com.ayman.realestatetransactionsystem.model.dto;
+package com.ayman.realestatetransactionsystem.model.dto.request;
 
 import lombok.*;
 

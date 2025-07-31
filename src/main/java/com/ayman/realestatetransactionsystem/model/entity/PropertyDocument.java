@@ -1,6 +1,5 @@
-package com.ayman.realestatetransactionsystem.model;
+package com.ayman.realestatetransactionsystem.model.entity;
 
-import com.ayman.realestatetransactionsystem.model.enums.TransectionStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -35,6 +34,9 @@ public class PropertyDocument {
 
     @Field(type = FieldType.Text, name = "city")
     private String city;
+
+    @Field(type = FieldType.Text, name = "region")
+    private String region;
 
     @Field(type = FieldType.Text, name = "owner")
     private String ownerName;

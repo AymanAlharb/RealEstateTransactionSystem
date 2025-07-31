@@ -1,26 +1,28 @@
 package com.ayman.realestatetransactionsystem.service;
 
-import com.ayman.realestatetransactionsystem.exception.ApiException;
-import com.ayman.realestatetransactionsystem.model.User;
-import com.ayman.realestatetransactionsystem.model.dto.CreateAssignRoleRequest;
-import com.ayman.realestatetransactionsystem.model.dto.CreateKeycloakUserRequest;
-import com.ayman.realestatetransactionsystem.model.dto.CreateLoginRequest;
-import com.ayman.realestatetransactionsystem.model.dto.CreateUserRequest;
+import com.ayman.realestatetransactionsystem.properties.KeycloakProperties;
+import com.ayman.realestatetransactionsystem.model.entity.User;
+import com.ayman.realestatetransactionsystem.model.dto.request.CreateAssignRoleRequest;
+import com.ayman.realestatetransactionsystem.model.dto.request.CreateKeycloakUserRequest;
+import com.ayman.realestatetransactionsystem.model.dto.request.CreateLoginRequest;
+import com.ayman.realestatetransactionsystem.model.dto.request.CreateUserRequest;
 import com.ayman.realestatetransactionsystem.model.enums.UserRoleEnum;
 import com.ayman.realestatetransactionsystem.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -34,26 +36,7 @@ import java.util.stream.StreamSupport;
 @Service
 public class UserService {
 
-
-    @Value("${add-user-url}")
-    String addUserUrl;
-    @Value("${get-user-keycloak-url}")
-    String getUserKeycloakUrl;
-    @Value("${get-client-id-url}")
-    String getClientIdUrl;
-    @Value("${get-user-token-url}")
-    String getUserTokenUrl;
-    @Value("${resource-id}")
-    String resourceId;
-    @Value("${get-role-id-url}")
-    String getRoleIdUrl;
-    @Value("${assign-role-keycloak-url}")
-    String assignRoleUrl;
-    @Value("${admin-client-id}")
-    String client_id;
-    @Value("${client-secret}")
-    String client_secret;
-    String adminToken = "";
+    private final KeycloakProperties keycloakProperties;
     private final UserRepository userRepository;
     private final WebClient webClient = WebClient.builder().baseUrl("http://localhost:8080").build();
 
@@ -67,7 +50,7 @@ public class UserService {
                 .password(new BCryptPasswordEncoder().encode(userRequest.getPassword()))
                 .email(userRequest.getEmail())
                 .phoneNumber(userRequest.getPhoneNumber())
-                .role(assignRoleEnum(userRequest.getRole().toUpperCase()))
+                .role(UserRoleEnum.getCode(userRequest.getRole()))
                 .build();
 
         // Add User to Keycloak realm.
@@ -75,89 +58,85 @@ public class UserService {
 
         // Save to the database.
         userRepository.save(user);
-        log.info("New {} with the username {} signed-up", user.getRole(), user.getUsername());
+        log.info("New user: {} with the username: {} signed-up", user.getRole(), user.getUsername());
     }
 
     public String login(CreateLoginRequest loginRequest) {
         // Validate login info
         User user = userRepository.findUserByUsername(loginRequest.getUsername());
-        if(user == null) throw new ApiException("Wrong username or password");
-        if(!(new BCryptPasswordEncoder().matches(loginRequest.getPassword(), user.getPassword()))){
-            throw new ApiException("Wrong username or password");
+        if (user == null) throw new BadCredentialsException("Wrong username or password");
+
+        if (!(new BCryptPasswordEncoder().matches(loginRequest.getPassword(), user.getPassword()))) {
+            throw new BadCredentialsException("Wrong username or password");
         }
+
         // Build URL Encode
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("client_id", resourceId);
+        formData.add("client_id", keycloakProperties.getResourceId());
         formData.add("grant_type", "password");
         formData.add("password", user.getPassword());
         formData.add("username", loginRequest.getUsername());
         return getUserToken(formData, loginRequest.getUsername());
     }
 
-    private UserRoleEnum assignRoleEnum(String role) {
-        switch (role) {
-            case "BUYER" -> {
-                return UserRoleEnum.BUYER;
-            }
-            case "SELLER" -> {
-                return UserRoleEnum.SELLER;
-            }
-            default -> {
-                return UserRoleEnum.BROKER;
-            }
-        }
-    }
-
     private void checkDataUniqueness(CreateUserRequest userRequest) {
         // Check if the email unique
         if (userRepository.findUserByEmail(userRequest.getEmail()) != null) {
-            log.warn("User with the username {} tried to sign up with a used email: {}",
+            log.warn("User with the username: {} tried to sign up with a used email: {}",
                     userRequest.getUsername(), userRequest.getEmail());
-            throw new ApiException("The email is used");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already in use");
         }
 
         // Check if the username unique
         if (userRepository.findUserByUsername(userRequest.getUsername()) != null) {
-            log.warn("User with the email {} tried to sign up with a used username: {}",
+            log.warn("User with the email: {} tried to sign up with a used username: {}",
                     userRequest.getEmail(), userRequest.getUsername());
-            throw new ApiException("The username is used");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already in use");
         }
 
         // Check if the phone number is unique
-        if(userRepository.findUserByPhoneNumber(userRequest.getPhoneNumber()) != null){
-            log.warn("User with the email {} tried to sign up with a used phone number: {}",
+        if (userRepository.findUserByPhoneNumber(userRequest.getPhoneNumber()) != null) {
+            log.warn("User with the email: {} tried to sign up with a used phone number: {}",
                     userRequest.getEmail(), userRequest.getPhoneNumber());
-            throw new ApiException("The phone number is used");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone number is already in use");
         }
     }
 
     private void addUserToKeycloak(User user) {
         // Get Admin token
-        if (Objects.equals(adminToken, "")) {
-            log.info("admin token null");
-            MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-            formData.add("client_id", client_id);
-            formData.add("client_secret", client_secret);
-            formData.add("grant_type", "client_credentials");
-            adminToken = getUserToken(formData, "admin");
-        }
+        String adminToken = getAdminToken();
+
         // Add user to realm
         addUserToRealm(user, adminToken);
-        // Get user keycloak id
-        String userKeycloakId = getUserKeycloakId(user.getUsername());
-        // Get client id
-        String clientId = getClientId();
-        // Get role id
-        String roleId = getRoleId(clientId, user.getRole().toString());
-        // Assign role
-        assignRoleOnKeycloak(userKeycloakId, clientId, roleId, user.getRole().toString().toUpperCase(), user.getUsername());
 
+        // Get user keycloak id
+        String userKeycloakId = getUserKeycloakId(user.getUsername(), adminToken);
+
+        // Get client id
+        String clientId = getClientId(adminToken);
+
+        // Get role id
+        String roleId = getRoleId(clientId, user.getRole().toString(), adminToken);
+
+        // Assign role
+        assignRoleOnKeycloak(userKeycloakId, clientId, roleId, user.getRole().toString().toUpperCase(), user.getUsername(), adminToken);
+
+    }
+
+    private String getAdminToken() {
+        // Build URL Encode
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("client_id", keycloakProperties.getClient().getId());
+        formData.add("client_secret", keycloakProperties.getClient().getSecret());
+        formData.add("grant_type", "client_credentials");
+
+        return getUserToken(formData, "admin");
     }
 
     private String getUserToken(MultiValueMap<String, String> formData, String username) {
 
         String response = webClient.post()
-                .uri(getUserTokenUrl)
+                .uri(keycloakProperties.getUrls().getGetToken())
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .body(BodyInserters.fromFormData(formData))
                 .retrieve()
@@ -180,7 +159,7 @@ public class UserService {
         CreateKeycloakUserRequest request = getCreateKeycloakUserRequest(user);
 
         webClient.post()
-                .uri(addUserUrl)
+                .uri(keycloakProperties.getUrls().getAddUser())
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + adminToken)
                 .body(Mono.just(request), CreateKeycloakUserRequest.class)
@@ -202,9 +181,9 @@ public class UserService {
         return new CreateKeycloakUserRequest(user.getUsername(), enabledAccount, credentials);
     }
 
-    private String getUserKeycloakId(String username) {
+    private String getUserKeycloakId(String username, String adminToken) {
         String response = webClient.get()
-                .uri(getUserKeycloakUrl + username)
+                .uri(keycloakProperties.getUrls().getGetUser() + username)
                 .header("Authorization", "Bearer " + adminToken)
                 .retrieve()
                 .bodyToMono(String.class)
@@ -218,12 +197,13 @@ public class UserService {
             throw new RuntimeException(e);
         }
         JsonNode userNode = root.get(0);
+        log.info("User Keycloak id for the user: {} obtained from keycloak", username);
         return userNode.get("id").asText();
     }
 
-    private String getClientId() {
+    private String getClientId(String adminToken) {
         String response = webClient.get()
-                .uri(getClientIdUrl)
+                .uri(keycloakProperties.getUrls().getGetClientId())
                 .header("Authorization", "Bearer " + adminToken)
                 .retrieve()
                 .bodyToMono(String.class)
@@ -237,17 +217,17 @@ public class UserService {
         }
 
         Optional<JsonNode> clientNode = StreamSupport.stream(root.spliterator(), false)
-                .filter(client -> resourceId.equals(client.get("clientId").asText()))
+                .filter(client -> keycloakProperties.getResourceId().equals(client.get("clientId").asText()))
                 .findFirst();
 
         return clientNode
                 .map(client -> client.get("id").asText())
-                .orElseThrow(() -> new RuntimeException("client with client id: '" + resourceId + "' not found."));
+                .orElseThrow(() -> new RuntimeException("client with client id: '" + keycloakProperties.getResourceId() + "' not found."));
     }
 
-    private String getRoleId(String clientId, String role) {
+    private String getRoleId(String clientId, String role, String adminToken) {
         String response = webClient.get()
-                .uri(getRoleIdUrl + clientId + "/roles/" + role.toUpperCase())
+                .uri(keycloakProperties.getUrls().getGetRoleId() + clientId + "/roles/" + role.toUpperCase())
                 .header("Authorization", "Bearer " + adminToken)
                 .retrieve()
                 .bodyToMono(String.class)
@@ -264,18 +244,19 @@ public class UserService {
         return root.get("id").asText();
     }
 
-    private void assignRoleOnKeycloak(String userId, String clientId, String roleId, String roleName, String username) {
+    private void assignRoleOnKeycloak(String userId, String clientId, String roleId, String roleName, String username, String adminToken) {
         CreateAssignRoleRequest request = new CreateAssignRoleRequest(roleId, roleName);
 
         webClient.post()
-                .uri(assignRoleUrl + userId + "/role-mappings/clients/" + clientId)
+                .uri(keycloakProperties.getUrls().getAssignRole() + userId + "/role-mappings/clients/" + clientId)
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + adminToken)
-                .body(Mono.just(List.of(request)), new ParameterizedTypeReference<>() {})
+                .body(Mono.just(List.of(request)), new ParameterizedTypeReference<>() {
+                })
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
 
-        log.info("{} assigned with {} role", username, roleName);
+        log.info("User: {} assigned with the role: {} to Keycloak", username, roleName);
     }
 }

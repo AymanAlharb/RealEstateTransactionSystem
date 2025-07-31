@@ -1,7 +1,8 @@
 package com.ayman.realestatetransactionsystem.controller;
 
-import com.ayman.realestatetransactionsystem.exception.ApiResponse;
-import com.ayman.realestatetransactionsystem.model.dto.CreateBankRequest;
+import com.ayman.realestatetransactionsystem.constant.ApiRoutes;
+import com.ayman.realestatetransactionsystem.model.dto.response.ApiResponse;
+import com.ayman.realestatetransactionsystem.model.dto.request.CreateBankRequest;
 import com.ayman.realestatetransactionsystem.service.BankAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/account")
+@RequestMapping(ApiRoutes.BANK_ACCOUNT)
 @RestController
 public class BankAccountController {
     private final BankAccountService bankService;

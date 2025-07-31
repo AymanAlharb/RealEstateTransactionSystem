@@ -1,7 +1,6 @@
-package com.ayman.realestatetransactionsystem.model.dto;
+package com.ayman.realestatetransactionsystem.model.dto.request;
 
 
-import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 @Getter

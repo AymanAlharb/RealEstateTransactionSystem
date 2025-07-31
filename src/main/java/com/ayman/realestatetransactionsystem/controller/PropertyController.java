@@ -1,8 +1,9 @@
 package com.ayman.realestatetransactionsystem.controller;
 
-import com.ayman.realestatetransactionsystem.exception.ApiResponse;
-import com.ayman.realestatetransactionsystem.model.dto.CreatePropertyRequest;
-import com.ayman.realestatetransactionsystem.model.dto.CreateUpdatePropertyRequest;
+import com.ayman.realestatetransactionsystem.constant.ApiRoutes;
+import com.ayman.realestatetransactionsystem.model.dto.response.ApiResponse;
+import com.ayman.realestatetransactionsystem.model.dto.request.CreatePropertyRequest;
+import com.ayman.realestatetransactionsystem.model.dto.request.CreateUpdatePropertyRequest;
 import com.ayman.realestatetransactionsystem.service.PropertyService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -12,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/property")
+@RequestMapping(ApiRoutes.PROPERTY)
 @RestController
 public class PropertyController {
     private final PropertyService propertyService;

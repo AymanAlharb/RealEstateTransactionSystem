@@ -1,11 +1,10 @@
-package com.ayman.realestatetransactionsystem.model;
+package com.ayman.realestatetransactionsystem.model.entity;
 
 import com.ayman.realestatetransactionsystem.model.enums.PropertyStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter

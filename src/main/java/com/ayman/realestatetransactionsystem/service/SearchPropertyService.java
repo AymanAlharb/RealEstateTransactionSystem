@@ -1,14 +1,15 @@
 package com.ayman.realestatetransactionsystem.service;
 
-import com.ayman.realestatetransactionsystem.model.Property;
-import com.ayman.realestatetransactionsystem.model.PropertyDocument;
+import com.ayman.realestatetransactionsystem.model.dto.request.PropertyMessage;
+import com.ayman.realestatetransactionsystem.model.entity.Property;
+import com.ayman.realestatetransactionsystem.model.entity.PropertyDocument;
 import com.ayman.realestatetransactionsystem.repository.PropertyElasticsearchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -17,20 +18,22 @@ public class SearchPropertyService {
 
     private final PropertyElasticsearchRepository propertyElasticsearchRepository;
 
-    public void createProperty(Property property) {
+    @RabbitListener(queues = {"${rabbitmq.property-queue.queue-name}"})
+    public void createProperty(PropertyMessage property) {
         propertyElasticsearchRepository
                 .save(PropertyDocument.builder()
-                .id(property.getId())
-                .title(property.getTitle())
-                .description(property.getDescription())
-                .price(property.getPrice())
-                .status(property.getStatus().toString())
-                .location(property.getLocation())
-                .city(property.getCity().getName())
-                .ownerName(property.getOwner().getUsername())
-                .build());
+                        .id(property.getId())
+                        .title(property.getTitle())
+                        .description(property.getDescription())
+                        .price(property.getPrice())
+                        .status(property.getStatus())
+                        .location(property.getLocation())
+                        .city(property.getCity())
+                        .region(property.getRegion())
+                        .ownerName(property.getOwnerName())
+                        .build());
 
-        log.info("Property added to elasticsearch");
+        log.info("Property {} added to elasticsearch", property.getTitle());
 
     }
 

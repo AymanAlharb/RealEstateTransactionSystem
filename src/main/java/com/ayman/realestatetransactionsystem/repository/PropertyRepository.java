@@ -1,6 +1,6 @@
 package com.ayman.realestatetransactionsystem.repository;
 
-import com.ayman.realestatetransactionsystem.model.Property;
+import com.ayman.realestatetransactionsystem.model.entity.Property;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;

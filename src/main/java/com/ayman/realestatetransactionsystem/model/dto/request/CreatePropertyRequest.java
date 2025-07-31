@@ -1,9 +1,7 @@
-package com.ayman.realestatetransactionsystem.model.dto;
+package com.ayman.realestatetransactionsystem.model.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter

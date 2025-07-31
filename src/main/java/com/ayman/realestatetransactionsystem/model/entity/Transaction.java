@@ -1,4 +1,4 @@
-package com.ayman.realestatetransactionsystem.model;
+package com.ayman.realestatetransactionsystem.model.entity;
 
 import com.ayman.realestatetransactionsystem.model.enums.TransectionStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;

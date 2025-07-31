@@ -1,6 +1,6 @@
 package com.ayman.realestatetransactionsystem.repository;
 
-import com.ayman.realestatetransactionsystem.model.User;
+import com.ayman.realestatetransactionsystem.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

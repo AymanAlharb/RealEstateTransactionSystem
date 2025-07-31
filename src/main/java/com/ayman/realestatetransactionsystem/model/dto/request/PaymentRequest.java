@@ -1,10 +1,9 @@
-package com.ayman.realestatetransactionsystem.model.dto;
+package com.ayman.realestatetransactionsystem.model.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -23,6 +22,6 @@ public class PaymentRequest {
             message = "The cvv must be exactly 3 characters")
     private String cvv;
 
-    @NotNull
+    @NotNull(message = "The expiry data must be empty")
     private LocalDate expiryDate;
 }
