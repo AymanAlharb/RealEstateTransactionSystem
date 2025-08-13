@@ -1,0 +1,503 @@
+{
+	"info": {
+		"_postman_id": "5dfd16c3-21e4-484b-84ba-d6b927984dd2",
+		"name": "RealEstate",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46146435",
+		"_collection_link": "https://aymanalharbi-7699115.postman.co/workspace/c6b5cb70-daf8-4876-86a3-2b8f48c0f557/collection/46146435-5dfd16c3-21e4-484b-84ba-d6b927984dd2?action=share&source=collection_link&creator=46146435"
+	},
+	"item": [
+		{
+			"name": "Transection flow",
+			"item": [
+				{
+					"name": "Request property",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI2UlBCVy1EY2p0eW9yMWYxanRXeUQwWF9YNFptaFBURTJENGdiQmNOQmR3In0.eyJleHAiOjE3NTM5NDk1MjMsImlhdCI6MTc1Mzk0Mzg4MywianRpIjoiZDdhNDk5ZDItNzFiYS00OGM1LTliNzgtNGUxNGFkMmM1OTRmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9SZWFsRXN0YXRlU3lzdGVtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6Ijg1NDBmMDk5LTI2YzYtNGI5ZS1hN2NkLWY3OWZkZGI1MGIxYiIsInR5cCI6IkJlYXJlciIsImF6cCI6InJlYWwtZXN0YXRlLXJlc3QtYXBpIiwic2Vzc2lvbl9zdGF0ZSI6IjNmODI5YjI5LTc4MTAtNGVjMS1iZmE4LTk4OGFjZjg1ZjEzNiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1yZWFsZXN0YXRlc3lzdGVtIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWwtZXN0YXRlLXJlc3QtYXBpIjp7InJvbGVzIjpbIkJVWUVSIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJzaWQiOiIzZjgyOWIyOS03ODEwLTRlYzEtYmZhOC05ODhhY2Y4NWYxMzYiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInByZWZlcnJlZF91c2VybmFtZSI6ImJ1eWVyIn0.lNZEVPr1Mk49ccmVsf73e-1hYZdCvMPj28qvD8dkbZ09VhMSJWifMMLmx5reqXpsP40JZFSdJy7VpR9W7PYSjJ74cApYUQhFYG-QRVag73yVH4fLC5CeLbqxSh1NL6G__6AEYXQqUi--rtmXf17dmYPE-V-vdigapjylILy0nXLkXoxPDqUcn4HQ5TEOGObMWy7HLwiU-cUD4s6ZrOQCErI66OOkzx_qT6N0Ovoa57n-DY0C6s2kodQSYlQLDnLT0B0QIdbnqgPM7hSHNNoVZpWnQv5D2_2S1D8aRCQApvoWtt5vhi3ahI6oToKl6jxKYG6dBzjPzsrUr3rfVglDww",
+									"type": "string"
+								},
+								{
+									"key": "undefined",
+									"type": "any"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/v1/transaction/request/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"transaction",
+								"request",
+								"3"
+							]
+						},
+						"description": "JWT Token needed"
+					},
+					"response": []
+				},
+				{
+					"name": "Seller process request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI2UlBCVy1EY2p0eW9yMWYxanRXeUQwWF9YNFptaFBURTJENGdiQmNOQmR3In0.eyJleHAiOjE3NTM5NDk2NzQsImlhdCI6MTc1Mzk0NDAzNCwianRpIjoiNDQ3ZDg2MzUtYjc0OC00YTE0LWI0MDUtNjI4OWEyNzE2OTlkIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9SZWFsRXN0YXRlU3lzdGVtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjI5OWYyZWM0LTllZTQtNDhiOC04ZGIwLTlhYmQ3NzUwM2VmNSIsInR5cCI6IkJlYXJlciIsImF6cCI6InJlYWwtZXN0YXRlLXJlc3QtYXBpIiwic2Vzc2lvbl9zdGF0ZSI6ImI3ZGRkYjM0LWY1ZGEtNDMyMi1hYmY0LTE1MzVhN2JhNDNjMSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1yZWFsZXN0YXRlc3lzdGVtIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWwtZXN0YXRlLXJlc3QtYXBpIjp7InJvbGVzIjpbIlNFTExFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiYjdkZGRiMzQtZjVkYS00MzIyLWFiZjQtMTUzNWE3YmE0M2MxIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZWxsZXIifQ.F2xcdLHz-9HF4wy1NlZsNspnlyxy-oIs9GoKHeC7oco3M9wdXxe62W0y9QJ4PBdKHLRE75WFqbOuPqJr_yLohPh1T3uxr2Qw3zgBR8OM99EKZci9rQXCqoJhY-ZvpUmM_KIxu6dIwW-y_nMb---dtLKUHgJDXT2g5ZWOnveX5BCUv9yX8DXDfifu0-oWXYu0ylr6SLYeLcerMw5XYKnNMnDgAWDhmKRBtYucqmeX9RRWR-1lR_2Fh3GIVVYnPXLwyQYgqxQD-9vhR-lze7rYYcEp57QJ0ZpfgUAnWRPCSeAW_dxI4CJYXroV6BmsLP80i1rQC4WQ8fF2d3ru6DJTxg",
+									"type": "string"
+								},
+								{
+									"key": "undefined",
+									"type": "any"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"transectionId\": 1,\n  \"approval\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/v1/transaction/seller-process-transaction",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"transaction",
+								"seller-process-transaction"
+							]
+						},
+						"description": "JWT Token needed"
+					},
+					"response": []
+				},
+				{
+					"name": "Broker process request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI2UlBCVy1EY2p0eW9yMWYxanRXeUQwWF9YNFptaFBURTJENGdiQmNOQmR3In0.eyJleHAiOjE3NTM5NDkyMTgsImlhdCI6MTc1Mzk0MzU3OCwianRpIjoiNWM5YWZiMWItNDBiMy00YWY5LWFmNzMtZGJiNTJmMmRhODEyIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9SZWFsRXN0YXRlU3lzdGVtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImEwOGNlOGYxLWNlNzYtNGEyOC1iMzYwLWVmZTRmMTE4NTIyZCIsInR5cCI6IkJlYXJlciIsImF6cCI6InJlYWwtZXN0YXRlLXJlc3QtYXBpIiwic2Vzc2lvbl9zdGF0ZSI6IjU2NjNmMjJhLTQ3NDgtNGNhNC04NmYzLTQwZmM3MDZkYmI4NyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1yZWFsZXN0YXRlc3lzdGVtIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWwtZXN0YXRlLXJlc3QtYXBpIjp7InJvbGVzIjpbIkJST0tFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiNTY2M2YyMmEtNDc0OC00Y2E0LTg2ZjMtNDBmYzcwNmRiYjg3IiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJicm9rZXIifQ.zoEsz7qaIi-Szzdj4ohN_vVL6gduZkAdGxil3ZQtx3whnc8q_n-7geGwWzJVD8YYvuT8xT11MIda02j0Npr8-AALH7PWaRwmK4QMCeydL8F3ykBYovYALvhUE0FEXQKCyeUtGRcTKYfI5DE0S_bA0x1-tUylnrkDeqC-uHhfK4ljn7cMHGvp4gNFW08KBdUyquyhkTCxX6us0M2JjlyQx9Hk_zhqFPiZ4KtEBK-2s4lBwB-ylKhoVKZerI-WwExA7tpfi6_8BcWqv9MaCDGcM1yNohGwbYd8-SaNC1SmVOjbTsvvQl_RlUCabG1ElAVlb8XBvBApYDtpE7l9iMdLvg",
+									"type": "string"
+								},
+								{
+									"key": "undefined",
+									"type": "any"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"transectionId\": 1,\n  \"approval\": true\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/v1/transaction/broker-process-transaction",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"transaction",
+								"broker-process-transaction"
+							]
+						},
+						"description": "JWT Token needed"
+					},
+					"response": []
+				}
+			],
+			"description": "The main flow of project where the Buyer request a property, Seller then broker approve it then the payment by the Buyer"
+		},
+		{
+			"name": "Seller",
+			"item": [
+				{
+					"name": "Update property",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "undefined",
+									"type": "any"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"new title\",\n  \"description\": \"3 rooms\",\n  \"price\": 500000,\n  \"status\": \"AVAILABLE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/v1/property/update/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"property",
+								"update",
+								"5"
+							]
+						},
+						"description": "JWT Token needed"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete property",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "undefined",
+									"type": "any"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/v1/property/delete/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"property",
+								"delete",
+								"3"
+							]
+						},
+						"description": "JWT Token needed"
+					},
+					"response": []
+				}
+			],
+			"description": "Seller endpoints where the Seller can Update and Delete his properties"
+		},
+		{
+			"name": "Broker",
+			"item": [
+				{
+					"name": "Add property",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI2UlBCVy1EY2p0eW9yMWYxanRXeUQwWF9YNFptaFBURTJENGdiQmNOQmR3In0.eyJleHAiOjE3NTM5NDkyMTgsImlhdCI6MTc1Mzk0MzU3OCwianRpIjoiNWM5YWZiMWItNDBiMy00YWY5LWFmNzMtZGJiNTJmMmRhODEyIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9SZWFsRXN0YXRlU3lzdGVtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImEwOGNlOGYxLWNlNzYtNGEyOC1iMzYwLWVmZTRmMTE4NTIyZCIsInR5cCI6IkJlYXJlciIsImF6cCI6InJlYWwtZXN0YXRlLXJlc3QtYXBpIiwic2Vzc2lvbl9zdGF0ZSI6IjU2NjNmMjJhLTQ3NDgtNGNhNC04NmYzLTQwZmM3MDZkYmI4NyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1yZWFsZXN0YXRlc3lzdGVtIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWwtZXN0YXRlLXJlc3QtYXBpIjp7InJvbGVzIjpbIkJST0tFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiNTY2M2YyMmEtNDc0OC00Y2E0LTg2ZjMtNDBmYzcwNmRiYjg3IiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJicm9rZXIifQ.zoEsz7qaIi-Szzdj4ohN_vVL6gduZkAdGxil3ZQtx3whnc8q_n-7geGwWzJVD8YYvuT8xT11MIda02j0Npr8-AALH7PWaRwmK4QMCeydL8F3ykBYovYALvhUE0FEXQKCyeUtGRcTKYfI5DE0S_bA0x1-tUylnrkDeqC-uHhfK4ljn7cMHGvp4gNFW08KBdUyquyhkTCxX6us0M2JjlyQx9Hk_zhqFPiZ4KtEBK-2s4lBwB-ylKhoVKZerI-WwExA7tpfi6_8BcWqv9MaCDGcM1yNohGwbYd8-SaNC1SmVOjbTsvvQl_RlUCabG1ElAVlb8XBvBApYDtpE7l9iMdLvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"property5\",\n  \"description\": \"5 rooms\",\n  \"price\": 10000000,\n  \"status\": \"AVAILABLE\",\n  \"location\": \"Jeddah, \",\n  \"cityName\": \"Jeddah\",\n  \"regionName\": \"Makkah\",\n  \"ownerUsername\": \"seller\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/v1/property/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"property",
+								"add"
+							]
+						},
+						"description": "JWT token needed"
+					},
+					"response": []
+				},
+				{
+					"name": "Add city",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI2UlBCVy1EY2p0eW9yMWYxanRXeUQwWF9YNFptaFBURTJENGdiQmNOQmR3In0.eyJleHAiOjE3NTM5NDkyMTgsImlhdCI6MTc1Mzk0MzU3OCwianRpIjoiNWM5YWZiMWItNDBiMy00YWY5LWFmNzMtZGJiNTJmMmRhODEyIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9SZWFsRXN0YXRlU3lzdGVtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6ImEwOGNlOGYxLWNlNzYtNGEyOC1iMzYwLWVmZTRmMTE4NTIyZCIsInR5cCI6IkJlYXJlciIsImF6cCI6InJlYWwtZXN0YXRlLXJlc3QtYXBpIiwic2Vzc2lvbl9zdGF0ZSI6IjU2NjNmMjJhLTQ3NDgtNGNhNC04NmYzLTQwZmM3MDZkYmI4NyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1yZWFsZXN0YXRlc3lzdGVtIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWwtZXN0YXRlLXJlc3QtYXBpIjp7InJvbGVzIjpbIkJST0tFUiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJlbWFpbCBwcm9maWxlIiwic2lkIjoiNTY2M2YyMmEtNDc0OC00Y2E0LTg2ZjMtNDBmYzcwNmRiYjg3IiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJicm9rZXIifQ.zoEsz7qaIi-Szzdj4ohN_vVL6gduZkAdGxil3ZQtx3whnc8q_n-7geGwWzJVD8YYvuT8xT11MIda02j0Npr8-AALH7PWaRwmK4QMCeydL8F3ykBYovYALvhUE0FEXQKCyeUtGRcTKYfI5DE0S_bA0x1-tUylnrkDeqC-uHhfK4ljn7cMHGvp4gNFW08KBdUyquyhkTCxX6us0M2JjlyQx9Hk_zhqFPiZ4KtEBK-2s4lBwB-ylKhoVKZerI-WwExA7tpfi6_8BcWqv9MaCDGcM1yNohGwbYd8-SaNC1SmVOjbTsvvQl_RlUCabG1ElAVlb8XBvBApYDtpE7l9iMdLvg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n  \"name\": \"Jeddah\",\n  \"region\": \"Makkah\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/v1/city/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"city",
+								"add"
+							]
+						},
+						"description": "JWT token needed"
+					},
+					"response": []
+				}
+			],
+			"description": "Broker endpoints"
+		},
+		{
+			"name": "Buyer",
+			"item": [
+				{
+					"name": "Search property by city",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/v1/search/get-by-city-name/jeddah",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"search",
+								"get-by-city-name",
+								"jeddah"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find by price",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/v1/search/get-by-price-range/0/10000000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"search",
+								"get-by-price-range",
+								"0",
+								"10000000"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"seller\",\n  \"password\": \"Seller@1234\"\n}   ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/v1/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "JWT token returned"
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"buyer\",\n  \"password\": \"Buyer@1234\",\n  \"email\": \"n18aym1an@gmail.com\",\n  \"phoneNumber\": \"0535552895\",\n  \"role\": \"buyer\"\n}\n\n// {\n//   \"username\": \"seller\",\n//   \"password\": \"Seller@1234\",\n//   \"email\": \"seller@gmail.com\",\n//   \"phoneNumber\": \"0555555819\",\n//   \"role\": \"seller\"\n// }\n// {    \n//   \"username\": \"broker\",\n//   \"password\": \"Broker@1234\",\n//   \"email\": \"broker@gmail.com\",\n//   \"phoneNumber\": \"0555255894\",\n//   \"role\": \"broker\"\n// }\n\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/api/v1/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						},
+						"description": "User add to database and keycloak"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bank Account",
+			"item": [
+				{
+					"name": "Add bank account",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI2UlBCVy1EY2p0eW9yMWYxanRXeUQwWF9YNFptaFBURTJENGdiQmNOQmR3In0.eyJleHAiOjE3NTM5NDk1MjMsImlhdCI6MTc1Mzk0Mzg4MywianRpIjoiZDdhNDk5ZDItNzFiYS00OGM1LTliNzgtNGUxNGFkMmM1OTRmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9SZWFsRXN0YXRlU3lzdGVtIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6Ijg1NDBmMDk5LTI2YzYtNGI5ZS1hN2NkLWY3OWZkZGI1MGIxYiIsInR5cCI6IkJlYXJlciIsImF6cCI6InJlYWwtZXN0YXRlLXJlc3QtYXBpIiwic2Vzc2lvbl9zdGF0ZSI6IjNmODI5YjI5LTc4MTAtNGVjMS1iZmE4LTk4OGFjZjg1ZjEzNiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1yZWFsZXN0YXRlc3lzdGVtIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWwtZXN0YXRlLXJlc3QtYXBpIjp7InJvbGVzIjpbIkJVWUVSIl19LCJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJzaWQiOiIzZjgyOWIyOS03ODEwLTRlYzEtYmZhOC05ODhhY2Y4NWYxMzYiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInByZWZlcnJlZF91c2VybmFtZSI6ImJ1eWVyIn0.lNZEVPr1Mk49ccmVsf73e-1hYZdCvMPj28qvD8dkbZ09VhMSJWifMMLmx5reqXpsP40JZFSdJy7VpR9W7PYSjJ74cApYUQhFYG-QRVag73yVH4fLC5CeLbqxSh1NL6G__6AEYXQqUi--rtmXf17dmYPE-V-vdigapjylILy0nXLkXoxPDqUcn4HQ5TEOGObMWy7HLwiU-cUD4s6ZrOQCErI66OOkzx_qT6N0Ovoa57n-DY0C6s2kodQSYlQLDnLT0B0QIdbnqgPM7hSHNNoVZpWnQv5D2_2S1D8aRCQApvoWtt5vhi3ahI6oToKl6jxKYG6dBzjPzsrUr3rfVglDww",
+									"type": "string"
+								},
+								{
+									"key": "undefined",
+									"type": "any"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountNumber\": \"1234567887624852\",\n  \"balance\": 10000009\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/v1/account/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"account",
+								"add"
+							]
+						},
+						"description": "JWT token needed"
+					},
+					"response": []
+				}
+			],
+			"description": "Bank Acount r"
+		}
+	]
+}
