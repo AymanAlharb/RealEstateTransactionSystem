@@ -1,5 +1,6 @@
 package com.ayman.realestatetransactionsystem.service;
 
+import com.ayman.realestatetransactionsystem.model.dto.response.RegistrationResponse;
 import com.ayman.realestatetransactionsystem.properties.KeycloakProperties;
 import com.ayman.realestatetransactionsystem.model.entity.User;
 import com.ayman.realestatetransactionsystem.model.dto.request.CreateAssignRoleRequest;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -30,6 +32,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+import static com.ayman.realestatetransactionsystem.model.mapper.RegistrationMapper.createRegistrationResponse;
+
 @RequiredArgsConstructor
 @Slf4j
 @Service
@@ -39,7 +43,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final WebClient webClient = WebClient.builder().baseUrl("http://localhost:8080").build();
 
-    public void registerUser(CreateUserRequest userRequest) {
+    @Transactional
+    public RegistrationResponse registerUser(CreateUserRequest userRequest) {
 
         checkDataUniqueness(userRequest);
 
@@ -58,6 +63,8 @@ public class UserService {
         // Save to the database.
         userRepository.save(user);
         log.info("New user: {} with the username: {} signed-up", user.getRole(), user.getUsername());
+
+        return createRegistrationResponse(user);
     }
 
     public String login(CreateLoginRequest loginRequest) {

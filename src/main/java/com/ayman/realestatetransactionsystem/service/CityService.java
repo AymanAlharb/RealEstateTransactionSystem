@@ -1,5 +1,6 @@
 package com.ayman.realestatetransactionsystem.service;
 
+import com.ayman.realestatetransactionsystem.model.dto.response.CityCreatedResponse;
 import com.ayman.realestatetransactionsystem.model.entity.City;
 import com.ayman.realestatetransactionsystem.model.dto.request.CreateCityRequest;
 import com.ayman.realestatetransactionsystem.model.entity.User;
@@ -10,7 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import static com.ayman.realestatetransactionsystem.model.mapper.CityMapper.createCityResponse;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -21,7 +25,8 @@ public class CityService {
     private final CommonService commonService;
 
 
-    public void addCity(CreateCityRequest cityRequest) {
+    @Transactional
+    public CityCreatedResponse addCity(CreateCityRequest cityRequest) {
         User user = userRepository.findUserByUsername
                 (commonService.getUsernameFromToken(SecurityContextHolder.getContext().getAuthentication()));
 
@@ -39,5 +44,7 @@ public class CityService {
 
         log.info("User: {} added the city: {} in the region: {}",
                 user.getUsername(), cityRequest.getName(), cityRequest.getRegion());
+
+        return createCityResponse(city);
     }
 }

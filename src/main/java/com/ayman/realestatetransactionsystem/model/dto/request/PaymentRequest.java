@@ -14,7 +14,7 @@ public class PaymentRequest {
 
     @NotNull
     @Positive
-    private Long transectionId;
+    private Long transactionId;
 
     @NotEmpty
     @Size(max = 3,

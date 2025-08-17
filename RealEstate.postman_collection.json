@@ -8,7 +8,7 @@
 	},
 	"item": [
 		{
-			"name": "Transection flow",
+			"name": "transaction flow",
 			"item": [
 				{
 					"name": "Request property",
@@ -69,7 +69,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"transectionId\": 1,\n  \"approval\": true\n}",
+							"raw": "{\n  \"transactionId\": 1,\n  \"approval\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -115,7 +115,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"transectionId\": 1,\n  \"approval\": true\n}\n",
+							"raw": "{\n  \"transactionId\": 1,\n  \"approval\": true\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"

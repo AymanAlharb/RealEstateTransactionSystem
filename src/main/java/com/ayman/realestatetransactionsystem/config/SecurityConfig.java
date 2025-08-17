@@ -4,6 +4,7 @@ import com.ayman.realestatetransactionsystem.service.JwtAuthConverterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,27 +26,25 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/register",
-                        "/api/v1/auth/login",
-                        "/api/v1/search/get-by-city-name/*",
-                        "/api/v1/search/get-by-price-range/*/*",
-                        "/swagger-ui.html",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/swagger-ui/index.html")
+                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui/index.html")
                 .permitAll()
-                .requestMatchers("/api/v1/property/add",
-                        "/api/v1/transection/broker-process-transection",
-                        "/api/v1/transection/cancel/*,",
-                        "/api/v1/city/add")
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth", "/api/v1/auth/token")
+                .permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/search/city/*", "/api/v1/search/price-range/*/*")
+                .permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/properties", "/api/v1/cities")
                 .hasRole("BROKER")
-                .requestMatchers("/api/v1/transection/request/")
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/transactions/broker-process")
+                .hasRole("BROKER")
+                .requestMatchers(HttpMethod.POST, "/api/v1/transactions/*/request")
                 .hasRole("BUYER")
-                .requestMatchers("/api/v1/transection/seller-process-transection",
-                        "/api/v1/property/delete/*",
-                        "/api/v1/property/update/*")
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/transactions/seller-process")
                 .hasRole("SELLER")
-                .requestMatchers("/api/v1/account/add")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/properties/*")
+                .hasRole("SELLER")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/properties/*")
+                .hasRole("SELLER")
+                .requestMatchers(HttpMethod.POST, "/api/v1/accounts")
                 .hasAnyRole("BROKER", "SELLER", "BUYER")
                 .anyRequest()
                 .authenticated();

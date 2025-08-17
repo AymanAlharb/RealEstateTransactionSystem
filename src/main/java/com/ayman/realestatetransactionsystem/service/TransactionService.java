@@ -1,11 +1,12 @@
 package com.ayman.realestatetransactionsystem.service;
 
 import com.ayman.realestatetransactionsystem.model.dto.request.CreateApprovalRequest;
+import com.ayman.realestatetransactionsystem.model.dto.response.PropertyRequestResponse;
 import com.ayman.realestatetransactionsystem.model.struct.EmailStruct;
 import com.ayman.realestatetransactionsystem.model.dto.request.PaymentRequest;
 import com.ayman.realestatetransactionsystem.model.entity.*;
 import com.ayman.realestatetransactionsystem.model.enums.PropertyStatusEnum;
-import com.ayman.realestatetransactionsystem.model.enums.TransectionStatusEnum;
+import com.ayman.realestatetransactionsystem.model.enums.TransactionStatusEnum;
 import com.ayman.realestatetransactionsystem.properties.RabbitMQProperties;
 import com.ayman.realestatetransactionsystem.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import static com.ayman.realestatetransactionsystem.constant.EmailConstant.*;
+import static com.ayman.realestatetransactionsystem.model.mapper.PropertyRequestMapper.createPropertyRequestResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,7 +30,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @Service
 public class TransactionService {
-    private final TransectionRepository transectionRepository;
+    private final TransactionRepository transactionRepository;
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
     private final CommonService commonService;
@@ -38,7 +40,7 @@ public class TransactionService {
     private final RabbitMQProperties rabbitMQProperties;
 
     @Transactional
-    public void requestProperty(Long propertyId) {
+    public PropertyRequestResponse requestProperty(Long propertyId) {
         // Get buyer
         User buyer = userRepository.findUserByUsername(commonService.
                 getUsernameFromToken(SecurityContextHolder.getContext().getAuthentication()));
@@ -55,7 +57,7 @@ public class TransactionService {
 
         Transaction transaction = Transaction.builder()
                 .amount(property.getPrice())
-                .status(TransectionStatusEnum.PENDING)
+                .status(TransactionStatusEnum.PENDING)
                 .date(LocalDateTime.now())
                 .property(property)
                 .buyer(buyer)
@@ -66,18 +68,22 @@ public class TransactionService {
         log.info("Buyer: {} has made a request to buy: {}", buyer.getUsername(), property.getTitle());
         property.setStatus(PropertyStatusEnum.LOCKED);
         propertyRepository.save(property);
-        transectionRepository.save(transaction);
+        transactionRepository.save(transaction);
 
         // Send emails
         sendEmail(buyer, String.format(REQUEST_EMAIL_SUBJECT, property.getTitle()),
                 String.format(BUYER_REQUEST_MESSAGE, property.getTitle()));
         sendEmail(property.getOwner(), String.format(REQUEST_EMAIL_SUBJECT, property.getTitle()),
                 String.format(SELLER_REQUEST_MESSAGE, buyer.getUsername(), property.getTitle()));
+
+        // Create response
+        return createPropertyRequestResponse(transaction);
     }
 
-    public void sellerApproveOrDissApprove(CreateApprovalRequest approvalRequest) {
-        // Get transection
-        Transaction transaction = getTransectionOrThrow(approvalRequest);
+    @Transactional
+    public PropertyRequestResponse sellerApproveOrDissApprove(CreateApprovalRequest approvalRequest) {
+        // Get transaction
+        Transaction transaction = gettransactionOrThrow(approvalRequest);
 
         // Get seller
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -90,40 +96,41 @@ public class TransactionService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Property does not belong to seller");
         }
 
-        // Check if transection status
-        if (!transaction.getStatus().equals(TransectionStatusEnum.PENDING)) {
+        // Check the transaction status
+        if (!transaction.getStatus().equals(TransactionStatusEnum.PENDING)) {
             log.info("User: {} tried to approve a request to the property: {} that can not be approved that is because {}",
                     seller.getUsername(), transaction.getProperty().getTitle(), transaction.getProperty().getStatus());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transection " + transaction.getStatus().toString().toLowerCase() + " and can not be approved by the seller");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "transaction " + transaction.getStatus().toString().toLowerCase() + " and can not be approved by the seller");
         }
 
         if (approvalRequest.getApproval()) {
             // Modify transaction
-            transaction.setStatus(TransectionStatusEnum.APPROVED_BY_SELLER);
-            transectionRepository.save(transaction);
+            transaction.setStatus(TransactionStatusEnum.APPROVED_BY_SELLER);
+            transactionRepository.save(transaction);
 
             // Send emails
             sendEmail(transaction.getBuyer(), REQUEST_APPROVAL_EMAIL_SUBJECT,
                     String.format(BUYER_APPROVAL_MESSAGE, transaction.getProperty().getTitle(), seller.getUsername()));
             sendEmail(transaction.getBroker(), String.format(REQUEST_EMAIL_SUBJECT, transaction.getProperty().getTitle()), String.format(BROKER_REQUEST_MESSAGE, transaction.getBuyer().getUsername(), transaction.getProperty().getTitle()));
 
-            log.info("User: {} approved the transaction with the id: {}", seller.getUsername(), approvalRequest.getTransectionId());
+            log.info("User: {} approved the transaction with the id: {}", seller.getUsername(), approvalRequest.getTransactionId());
         } else {
             // Modify transaction
-            transaction.setStatus(TransectionStatusEnum.FAILED);
+            transaction.setStatus(TransactionStatusEnum.FAILED);
             transaction.setReasonOfFailure(String.valueOf(approvalRequest.getReasonOfFailure()));
 
             // Send email
             sendEmail(transaction.getBuyer(), REQUEST_DENIED_EMAIL_SUBJECT,
                     String.format(BUYER_DENIAL_MESSAGE, transaction.getProperty().getTitle(), seller, approvalRequest.getReasonOfFailure()));
-
-            log.info("User: {} unapproved the transaction with the id: {}", seller.getUsername(), approvalRequest.getTransectionId());
+            log.info("User: {} unapproved the transaction with the id: {}", seller.getUsername(), approvalRequest.getTransactionId());
         }
+        return createPropertyRequestResponse(transaction);
     }
 
-    public void brokerApproveOrDissApprove(CreateApprovalRequest approvalRequest) {
-        // Get transection
-        Transaction transaction = getTransectionOrThrow(approvalRequest);
+    @Transactional
+    public PropertyRequestResponse brokerApproveOrDissApprove(CreateApprovalRequest approvalRequest) {
+        // Get transaction
+        Transaction transaction = gettransactionOrThrow(approvalRequest);
 
         // Get broker
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -137,7 +144,7 @@ public class TransactionService {
         }
 
         // Check if seller approved
-        if (!transaction.getStatus().equals(TransectionStatusEnum.APPROVED_BY_SELLER)) {
+        if (!transaction.getStatus().equals(TransactionStatusEnum.APPROVED_BY_SELLER)) {
             log.info("User: {} tried to approve a request to the property: {} that can not be approved, that is because {}",
                     broker.getUsername(), transaction.getProperty().getTitle(), transaction.getProperty().getStatus());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction " + transaction.getStatus() + " and can not be approved by the broker");
@@ -145,38 +152,40 @@ public class TransactionService {
 
         if (approvalRequest.getApproval()) {
             // Modify transaction
-            transaction.setStatus(TransectionStatusEnum.APPROVED);
-            transectionRepository.save(transaction);
+            transaction.setStatus(TransactionStatusEnum.APPROVED);
+            transactionRepository.save(transaction);
 
             // Send email
             sendEmail(transaction.getBuyer(), REQUEST_APPROVAL_EMAIL_SUBJECT,
                     String.format(BUYER_APPROVAL_MESSAGE, transaction.getProperty().getTitle(), broker.getUsername()));
 
-            log.info("User: {} approved the transection with the id: {}", broker.getUsername(), approvalRequest.getTransectionId());
+            log.info("User: {} approved the transaction with the id: {}", broker.getUsername(), approvalRequest.getTransactionId());
         } else {
             // Modify transaction
-            transaction.setStatus(TransectionStatusEnum.FAILED);
+            transaction.setStatus(TransactionStatusEnum.FAILED);
             transaction.setReasonOfFailure(approvalRequest.getReasonOfFailure());
 
             // Send email
             sendEmail(transaction.getBuyer(), REQUEST_DENIED_EMAIL_SUBJECT,
                     String.format(BUYER_DENIAL_MESSAGE, transaction.getProperty().getTitle(), broker, approvalRequest.getReasonOfFailure()));
 
-            log.info("User: {} unapproved the transection with the id: {}", broker.getUsername(), approvalRequest.getTransectionId());
+            log.info("User: {} unapproved the transaction with the id: {}", broker.getUsername(), approvalRequest.getTransactionId());
         }
+        return createPropertyRequestResponse(transaction);
     }
 
-    public void payment(PaymentRequest paymentRequest) {
+    @Transactional
+    public PropertyRequestResponse payment(PaymentRequest paymentRequest) {
 
         // Get buyer
         User buyer = userRepository.findUserByUsername(commonService.
                 getUsernameFromToken(SecurityContextHolder.getContext().getAuthentication()));
 
-        // Get Transection
-        Transaction transaction = transectionRepository.findTransactionById(paymentRequest.getTransectionId());
+        // Get transaction
+        Transaction transaction = transactionRepository.findTransactionById(paymentRequest.getTransactionId());
 
-        // Check if transection belongs to buyer and check transaction status
-        validateTransectionPayments(buyer, transaction, paymentRequest);
+        // Check if transaction belongs to buyer and check transaction status
+        validateTransactionPayments(buyer, transaction, paymentRequest);
 
         // Transfer
         transferPrice(buyer, transaction);
@@ -191,7 +200,7 @@ public class TransactionService {
 
         // Transfer ownership
         completeTransaction(transaction, buyer, ownership);
-
+        return createPropertyRequestResponse(transaction);
     }
 
     private void completeTransaction(Transaction transaction, User buyer, PropertyOwnership ownership) {
@@ -203,12 +212,12 @@ public class TransactionService {
         transaction.getProperty().setStatus(PropertyStatusEnum.SOLD);
         propertyRepository.save(transaction.getProperty());
         log.info("Ownership changed for the property: {} from: {} to: {}",
-                transaction.getProperty(), oldOwnerShip.getOwner().getUsername(), ownership.getOwner().getUsername());
+                transaction.getProperty().getTitle(), oldOwnerShip.getOwner().getUsername(), ownership.getOwner().getUsername());
 
-        // Change transection status.
-        transaction.setStatus(TransectionStatusEnum.COMPLETED);
+        // Change transaction status.
+        transaction.setStatus(TransactionStatusEnum.COMPLETED);
 
-        transectionRepository.save(transaction);
+        transactionRepository.save(transaction);
     }
 
     private void sendEmail(User receiver, String subject, String body) {
@@ -216,10 +225,10 @@ public class TransactionService {
         rabbitTemplate.convertAndSend(rabbitMQProperties.getExchangeName(), rabbitMQProperties.getEmailQueue().getRoutingKeyName(), emailStruct);
     }
 
-    private void validateTransectionPayments(User buyer, Transaction transaction, PaymentRequest paymentRequest) {
+    private void validateTransactionPayments(User buyer, Transaction transaction, PaymentRequest paymentRequest) {
         if (transaction == null) {
             log.info("User: {} tried to pay for a non existing transaction", buyer.getUsername());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transection with the id " + paymentRequest.getTransectionId() + " exists");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transaction with the id " + paymentRequest.getTransactionId() + " exists");
         }
         // Check the card expiry date
         if (paymentRequest.getExpiryDate().isBefore(LocalDate.now())) {
@@ -227,15 +236,15 @@ public class TransactionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Card expired");
         }
 
-        // Check if transection belongs to buyer
+        // Check if transaction belongs to buyer
         if (!transaction.getBuyer().equals(buyer)) {
             log.info("User: {} tried to pay for the transaction: {} which they do not own", buyer.getUsername(), transaction.getId());
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "The transection does not belongs to the buyer");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "The transaction does not belongs to the buyer");
         }
-        // Check transection status
-        if (!transaction.getStatus().equals(TransectionStatusEnum.APPROVED)) {
+        // Check transaction status
+        if (!transaction.getStatus().equals(TransactionStatusEnum.APPROVED)) {
             log.info("User: {} tried to pay for the transaction: {} but failed due: {}", buyer.getUsername(), transaction.getId(), transaction.getStatus().toString().toLowerCase());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transection: " + transaction.getStatus().toString().toLowerCase());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "transaction: " + transaction.getStatus().toString().toLowerCase());
         }
 
     }
@@ -256,10 +265,10 @@ public class TransactionService {
         return bankAccount;
     }
 
-    private Transaction getTransectionOrThrow(CreateApprovalRequest approvalRequest) {
-        Transaction transaction = transectionRepository.findTransactionById(approvalRequest.getTransectionId());
+    private Transaction gettransactionOrThrow(CreateApprovalRequest approvalRequest) {
+        Transaction transaction = transactionRepository.findTransactionById(approvalRequest.getTransactionId());
         if (transaction == null)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transection with the id " + approvalRequest.getTransectionId() + " exists");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No transaction with the id " + approvalRequest.getTransactionId() + " exists");
         return transaction;
     }
 

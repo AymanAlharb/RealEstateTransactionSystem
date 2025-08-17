@@ -1,6 +1,7 @@
 package com.ayman.realestatetransactionsystem.service;
 
 import com.ayman.realestatetransactionsystem.model.dto.request.PropertyMessage;
+import com.ayman.realestatetransactionsystem.model.dto.response.PropertyCreatedResponse;
 import com.ayman.realestatetransactionsystem.model.entity.*;
 import com.ayman.realestatetransactionsystem.model.dto.request.CreatePropertyRequest;
 import com.ayman.realestatetransactionsystem.model.dto.request.CreateUpdatePropertyRequest;
@@ -22,6 +23,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import static com.ayman.realestatetransactionsystem.model.mapper.PropertyMapper.createPropertyCreatedResponse;
+
 @RequiredArgsConstructor
 @Slf4j
 @Service
@@ -33,7 +36,8 @@ public class PropertyService {
     private final RabbitTemplate rabbitTemplate;
     private final RabbitMQProperties rabbitMQProperties;
 
-    public void addProperty(CreatePropertyRequest propertyRequest) {
+    @Transactional
+    public PropertyCreatedResponse addProperty(CreatePropertyRequest propertyRequest) {
         // Get Broker username for logging
         String brokerUsername = commonService.
                 getUsernameFromToken(SecurityContextHolder.getContext().getAuthentication());
@@ -78,6 +82,8 @@ public class PropertyService {
 
         // Add to elasticsearch database
         pushToElasticsearch(property);
+
+        return createPropertyCreatedResponse(property);
     }
 
     private void pushToElasticsearch(Property property) {

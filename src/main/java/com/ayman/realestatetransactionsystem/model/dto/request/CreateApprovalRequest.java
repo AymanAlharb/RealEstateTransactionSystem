@@ -12,7 +12,7 @@ import lombok.*;
 public class CreateApprovalRequest {
     @Positive
     @NotNull
-    private Long transectionId;
+    private Long transactionId;
     @NotNull
     private Boolean approval;
     private String reasonOfFailure;

@@ -20,88 +20,59 @@ import java.util.Objects;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    // Our Exception
-    @ExceptionHandler(value = ApiException.class)
-    public ResponseEntity<ApiResponse> ApiException(ApiException e) {
-        String message = e.getMessage();
-        return ResponseEntity.status(400).body(new ApiResponse(message));
-    }
-
-    // Server Validation Exception
+    // RequestBody Validation Exception
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
         String msg = Objects.requireNonNull(e.getFieldError()).getDefaultMessage();
-        return ResponseEntity.status(400).body(new ApiResponse(msg));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(msg));
     }
 
-    // Server Validation Exception
+    // Param or Path Variable Validation Exception
     @ExceptionHandler(value = ConstraintViolationException.class)
     public ResponseEntity<ApiResponse> ConstraintViolationException(ConstraintViolationException e) {
         String msg = e.getMessage();
-        return ResponseEntity.status(400).body(new ApiResponse(msg));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(msg));
     }
 
-
-    // SQL Constraint Ex:(Duplicate) Exception
-    @ExceptionHandler(value = SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<ApiResponse> SQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e) {
-        String msg = e.getMessage();
-        return ResponseEntity.status(400).body(new ApiResponse(msg));
-    }
-
-    // wrong write SQL in @column Exception
+    // SQL syntax is invalid or database structure doesn’t match the query
     @ExceptionHandler(value = InvalidDataAccessResourceUsageException.class)
     public ResponseEntity<ApiResponse> InvalidDataAccessResourceUsageException(InvalidDataAccessResourceUsageException e) {
         String msg = e.getMessage();
-        return ResponseEntity.status(400).body(new ApiResponse(msg));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(msg));
     }
-
 
     // Database Constraint Exception
     @ExceptionHandler(value = DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponse> DataIntegrityViolationException(DataIntegrityViolationException e) {
         String msg = e.getMessage();
-        return ResponseEntity.status(400).body(new ApiResponse(msg));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(msg));
     }
 
     // Method not allowed Exception
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiResponse> HttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         String msg = e.getMessage();
-        return ResponseEntity.status(400).body(new ApiResponse(msg));
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new ApiResponse(msg));
     }
 
     // Json parse Exception
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse> HttpMessageNotReadableException(HttpMessageNotReadableException e) {
         String msg = e.getMessage();
-        return ResponseEntity.status(400).body(new ApiResponse(msg));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(msg));
     }
 
-    // TypesMisMatch Exception
+    // Param or Path variable TypesMisMatch Exception
     @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiResponse> MethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         String msg = e.getMessage();
-        return ResponseEntity.status(400).body(new ApiResponse(msg));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(msg));
     }
 
-    // EndPoint Not Found Exception
-    @ExceptionHandler(value = NoResourceFoundException.class)
-    public ResponseEntity<ApiResponse> NoResourceFoundException(NoResourceFoundException e) {
-        String msg = e.getMessage();
-        return ResponseEntity.status(400).body(new ApiResponse(msg));
-    }
-
+    // Transaction Exception
     @ExceptionHandler(value = TransactionSystemException.class)
     public ResponseEntity<ApiResponse> TransactionSystemException(TransactionSystemException e) {
         String msg = e.getMessage();
-        return ResponseEntity.status(400).body(new ApiResponse(msg));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(msg));
     }
-    // RuntimeException
-//    @ExceptionHandler(value = RuntimeException.class)
-//    public ResponseEntity<ApiResponse> RuntimeException(RuntimeException e) {
-//        String msg = e.getMessage();
-//        return ResponseEntity.status(400).body(new ApiResponse(msg));
-//    }
-
 }

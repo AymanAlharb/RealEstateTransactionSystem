@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
                         name = "Ayman Alharbi",
                         email = "ayman.f.alharbi@gmail.con"
                 ),
-                description = "OpanApi documentation for real estate Management",
+                description = "OpenApi documentation for Real Estate Management",
                 title = "Real Estate Management",
                 version = "0.1"
         ), security = {
@@ -27,7 +27,6 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 )
 @SecurityScheme(
         name = "BearAuth",
-        description = "JWT auth description",
         scheme = "bearer",
         type = SecuritySchemeType.HTTP,
         bearerFormat = "JWT",

@@ -1,6 +1,6 @@
 package com.ayman.realestatetransactionsystem.model.entity;
 
-import com.ayman.realestatetransactionsystem.model.enums.TransectionStatusEnum;
+import com.ayman.realestatetransactionsystem.model.enums.TransactionStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,7 +22,7 @@ public class Transaction {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "varchar(24) not null")
-    private TransectionStatusEnum status;
+    private TransactionStatusEnum status;
 
     @Column(columnDefinition = "varchar(256)")
     private String reasonOfFailure;

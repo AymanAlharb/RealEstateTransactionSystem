@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -35,6 +36,8 @@ public class SearchPropertyService {
         log.info("Property {} added to elasticsearch", property.getTitle());
 
     }
+
+
 
     public List<PropertyDocument> getPropertiesByCityName(String cityName) {
         return propertyElasticsearchRepository.findByCity(cityName);

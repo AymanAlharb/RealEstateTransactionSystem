@@ -1,5 +1,6 @@
 package com.ayman.realestatetransactionsystem.service;
 
+import com.ayman.realestatetransactionsystem.model.dto.response.BankAccountCreatedResponse;
 import com.ayman.realestatetransactionsystem.model.entity.BankAccount;
 import com.ayman.realestatetransactionsystem.model.entity.User;
 import com.ayman.realestatetransactionsystem.model.dto.request.CreateBankRequest;
@@ -10,7 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import static com.ayman.realestatetransactionsystem.model.mapper.BankAccountMapper.createBankResponse;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -20,7 +24,8 @@ public class BankAccountService {
     private final UserRepository userRepository;
     private final CommonService commonService;
 
-    public void addBankAccount(CreateBankRequest bankRequest) {
+    @Transactional
+    public BankAccountCreatedResponse addBankAccount(CreateBankRequest bankRequest) {
         // Get the user
         User user = userRepository.findUserByUsername(commonService.
                 getUsernameFromToken(SecurityContextHolder.getContext().getAuthentication()));
@@ -43,5 +48,7 @@ public class BankAccountService {
 
         bankRepository.save(bankAccount);
         log.info("User: {} added a bank account", user.getUsername());
+
+        return createBankResponse(bankAccount);
     }
 }

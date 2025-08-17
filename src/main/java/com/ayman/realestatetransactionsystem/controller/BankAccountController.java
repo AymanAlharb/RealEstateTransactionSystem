@@ -3,6 +3,7 @@ package com.ayman.realestatetransactionsystem.controller;
 import com.ayman.realestatetransactionsystem.constant.ApiRoutes;
 import com.ayman.realestatetransactionsystem.model.dto.response.ApiResponse;
 import com.ayman.realestatetransactionsystem.model.dto.request.CreateBankRequest;
+import com.ayman.realestatetransactionsystem.model.dto.response.BankAccountCreatedResponse;
 import com.ayman.realestatetransactionsystem.service.BankAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -20,17 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class BankAccountController {
     private final BankAccountService bankService;
 
-    @Operation(
-            summary = "Adds a bank account",
-            description = "Users can only have one bank account",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    description = "Bank account details required for account creation"
-            )
-    )
-    @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addBank(@RequestBody @Valid CreateBankRequest bankRequest){
-        bankService.addBankAccount(bankRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Account added successfully"));
+    @PostMapping
+    public ResponseEntity<BankAccountCreatedResponse> addBank(@RequestBody @Valid CreateBankRequest bankRequest){
+        return ResponseEntity.status(HttpStatus.OK).body(bankService.addBankAccount(bankRequest));
     }
 }

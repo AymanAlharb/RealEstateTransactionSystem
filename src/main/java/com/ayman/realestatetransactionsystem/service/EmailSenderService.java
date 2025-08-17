@@ -52,7 +52,7 @@ public class EmailSenderService {
         }
     }
 
-    public void sendEmail(String toEmail, String subject, String body) throws MessagingException, IOException {
+    private void sendEmail(String toEmail, String subject, String body) throws MessagingException, IOException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 

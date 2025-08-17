@@ -17,22 +17,13 @@ public class SearchPropertyController {
 
     private final SearchPropertyService searchPropertyService;
 
-
-    @Operation(
-            summary = "Adds a property",
-            description = "Elasticsearch Public endpoint to fetch properties by cites"
-    )
-    @GetMapping("/get-by-city-name/{cityName}")
+    @GetMapping("/city/{cityName}")
     public List<PropertyDocument> getPropertiesByCityName(@PathVariable String cityName){
         return searchPropertyService.getPropertiesByCityName(cityName);
     }
 
-    @Operation(
-            summary = "Adds a property",
-            description = "Elasticsearch Public endpoint to fetch properties by price range"
-    )
-    @GetMapping("/get-by-price-range/{min}/{max}")
-    public List<PropertyDocument> getPropertiesByCityName(@PathVariable double min, @PathVariable double max){
-        return searchPropertyService.getPropertiesByPriceRange(min, max);
+    @GetMapping("/price-range/{minPrice}/{maxPrice}")
+    public List<PropertyDocument> getPropertiesByPriceRange(@PathVariable double minPrice, @PathVariable double maxPrice){
+        return searchPropertyService.getPropertiesByPriceRange(minPrice, maxPrice);
     }
 }
